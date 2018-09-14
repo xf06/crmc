@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<Configuration status="WARN">
+
+    <properties>
+		<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->  
+	    <property name="LOG_PATH">${sys:log.path}</property>
+    </properties>
+
+    <Appenders>  
+        <Console name="Console" target="SYSTEM_OUT" follow="true">  
+            <PatternLayout>  
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>  
+            </PatternLayout>  
+        </Console>
+        <File name="File_Debug" fileName="${LOG_PATH}/debug.log"> 
+         	  <Filters>
+         	     <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
+                 <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+              </Filters> 
+            <PatternLayout>  
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>  
+            </PatternLayout>  
+        </File>  
+        <File name="File_Info" fileName="D:/logtest/info.log"> 
+         	  <Filters>
+         	     <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                 <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+              </Filters> 
+            <PatternLayout>  
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>  
+            </PatternLayout>  
+        </File>
+        <File name="File_Error" fileName="D:/logtest/error.log">  
+              <Filters>
+                 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+              </Filters> 
+            <PatternLayout>  
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>  
+            </PatternLayout>  
+        </File>  
+        
+    </Appenders>  
+    <Loggers>  
+<!--         <Logger name="org.apache.catalina.util.LifecycleBase" level="error" />   -->
+<!--         <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn" />   -->
+<!--         <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn" />   -->
+<!--         <Logger name="org.hibernate.validator.internal.util.Version" level="warn" />   -->
+<!--         <Logger name="org.springframework" level="warn" />   -->
+<!--         <Logger name="com.github" level="debug" />   -->
+<!--         <Root level="DEBUG">   -->
+<!--             <AppenderRef ref="Console" /> -->
+<!--             <AppenderRef ref="File_Debug"/> -->
+<!--             <AppenderRef ref="File_Info" /> -->
+<!--             <AppenderRef ref="File_Error" /> -->
+<!--         </Root>   -->
+<!-- 		<AsyncLogger name="AsyncLogger" level="debug" includeLocation="true">   -->
+<!-- 	        <AppenderRef ref="Console" /> -->
+<!--             <AppenderRef ref="File_Debug"/> -->
+<!--             <AppenderRef ref="File_Info" /> -->
+<!--             <AppenderRef ref="File_Error" />  -->
+<!-- 	    </AsyncLogger>   -->
+		<asyncRoot level="debug" includeLocation="true">
+			<AppenderRef ref="Console" />
+            <AppenderRef ref="File_Debug"/>
+            <AppenderRef ref="File_Info" />
+            <AppenderRef ref="File_Error" /> 
+		</asyncRoot>
+    </Loggers>  
+</Configuration>  

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blackjade.crm.dao.CustomerDao">
+
+	<select id="selectCustomerByUserNameAndPassword" resultType="com.blackjade.crm.model.Customer">
+		SELECT
+			a.id "id",
+			a.username "username",
+			a.email "email"
+		FROM crm.customer a
+		WHERE a.username = #{username} and a.password = #{password}
+	</select>
+	
+	<select id="selectCustomerByEmailAndPassword" resultType="com.blackjade.crm.model.Customer">
+		SELECT
+			a.id "id",
+			a.username "username",
+			a.email "email"
+		FROM crm.customer a
+		WHERE a.email = #{email} and a.password = #{password}
+	</select>
+	
+	
+	<insert id="insertCustomer">
+		INSERT INTO customer 
+			(username, password, mobile, identification, email, is_email_verify, is_frozen, is_enable) 
+		VALUES 
+			(#{username}, #{password}, #{mobile}, #{identification}, #{email}, '0', '0', '1')
+	</insert>
+	
+	<select id="countUsername" resultType="java.lang.Integer">
+		select count(*) from crm.customer a where a.username = #{username}
+	</select>
+	
+	<select id="countEmail" resultType="java.lang.Integer">
+		select count(*) from crm.customer a where a.email = #{email}
+	</select>
+	
+	<update id="updateCustomerEmailVerify">
+		update crm.customer set is_email_verify = '1' where email = #{email}
+	</update>
+	
+	<select id="selectCustomerByUserName" resultType="com.blackjade.crm.model.Customer">
+		SELECT
+			a.id "id",
+			a.username "username",
+			a.is_email_verify "isEmailVerify",
+			a.email "email"
+		FROM crm.customer a
+		WHERE a.username = #{username}
+	</select>
+	
+	<update id="updatePasswordByEmail">
+		update crm.customer set password = #{password} where email = #{email}
+	</update>
+	
+	<select id="selectCustomerByIdAndPassword" resultType="com.blackjade.crm.model.Customer">
+		SELECT
+			a.id "id",
+			a.username "username",
+			a.email "email"
+		FROM crm.customer a
+		WHERE a.id = #{id} and a.password = #{password}
+		for update
+	</select>
+	
+	<update id="modifyPasswordById">
+		update crm.customer set password = #{password} where id = #{id}
+	</update>
+	
+	<update id="updateCustomerDetails">
+		update crm.customer 
+		<trim prefix="set" suffixOverrides=",">
+		     <if test="mobile != null">  
+		        mobile = #{mobile},  
+		     </if>  
+		     <if test="identification != null">  
+		        identification = #{identification},  
+		     </if> 
+		</trim>
+		where id = #{id}   
+	</update>
+	
+	<select id="selectCustomerById" resultType="com.blackjade.crm.model.Customer">
+		SELECT
+			a.id "id",
+			a.username "username",
+			a.is_email_verify "isEmailVerify",
+			a.email "email"
+		FROM crm.customer a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="scanPersonalInformation" resultType="com.blackjade.crm.model.Customer">
+	SELECT
+			a.id "id",
+			a.username "username",
+			a.password "password",
+			a.mobile "mobile",
+			a.identification "identification",
+			a.email "email",
+			a.is_email_verify "isEmailVerify",
+			a.is_frozen "isFrozen",
+			a.is_enable "isEnable",
+			a.create_time "createTime"
+		FROM crm.customer a
+		WHERE a.id = #{id}
+	</select>
+</mapper>
