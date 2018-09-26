@@ -2,8 +2,6 @@ package com.blackjade.crm.apis.wallet;
 
 import java.util.UUID;
 
-
-
 public class CDepositAns {
 	
 	private String messageid;
