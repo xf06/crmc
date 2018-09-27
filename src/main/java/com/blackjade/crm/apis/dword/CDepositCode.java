@@ -7,7 +7,7 @@ import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
 public class CDepositCode {
 	private String requestid;
 	private String messageid;
-	private String clientid;
+	private int clientid;
 	private int pnsid;
 	private int pnsgid;
 
@@ -38,11 +38,11 @@ public class CDepositCode {
 		this.messageid = messageid;
 	}
 
-	public String getClientid() {
+	public int getClientid() {
 		return clientid;
 	}
 
-	public void setClientid(String clientid) {
+	public void setClientid(int clientid) {
 		this.clientid = clientid;
 	}
 

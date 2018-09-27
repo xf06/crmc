@@ -23,7 +23,7 @@ import com.blackjade.crm.service.CustomerService;
 @RestController
 public class CustomerManageController {
 	
-	private static Logger logger = LoggerFactory.getLogger(CustomerStatusController.class);
+	private static Logger logger = LoggerFactory.getLogger(CustomerManageController.class);
 	
 	@Autowired
 	CustomerService customerService;

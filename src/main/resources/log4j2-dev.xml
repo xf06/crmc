@@ -59,7 +59,7 @@
 <!--             <AppenderRef ref="File_Info" /> -->
 <!--             <AppenderRef ref="File_Error" />  -->
 <!-- 	    </AsyncLogger>   -->
-		<asyncRoot level="debug" includeLocation="true">
+		<asyncRoot level="info" includeLocation="true">
 			<AppenderRef ref="Console" />
             <AppenderRef ref="File_Debug"/>
             <AppenderRef ref="File_Info" />

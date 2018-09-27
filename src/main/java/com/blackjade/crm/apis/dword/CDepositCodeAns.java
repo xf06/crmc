@@ -8,7 +8,7 @@ public class CDepositCodeAns {
 
 	private String requestid;
 	private String messageid;
-	private String clientid;
+	private int clientid;
 	private int pnsid;
 	private int pnsgid;
 	private String depositcode;
@@ -35,11 +35,11 @@ public class CDepositCodeAns {
 		this.messageid = messageid;
 	}
 
-	public String getClientid() {
+	public int getClientid() {
 		return clientid;
 	}
 
-	public void setClientid(String clientid) {
+	public void setClientid(int clientid) {
 		this.clientid = clientid;
 	}
 
