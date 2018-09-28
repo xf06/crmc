@@ -21,6 +21,12 @@ public class CDepositUpdateAns {
 	private DepositOrdStatus conlvl;
 	private DepositAccStatus status;
 
+	
+	public CDepositUpdateAns(String requestid){
+		this.messageid = "4004";
+		this.requestid = requestid;
+	}
+	
 	public String getRequestid() {
 		return requestid;
 	}

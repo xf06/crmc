@@ -1,5 +1,6 @@
 package com.blackjade.crm.apis.dword;
 
+import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 
 //X CRMC/CNET/APM	cDepositUpdate	
@@ -16,6 +17,19 @@ public class CDepositUpdate {
 	private long rcvquant;
 	private String transactionid;
 	private DepositOrdStatus conlvl;
+	
+	public DepositAccStatus reviewData() {
+		
+		if(!"4003".equals(messageid))
+			return ComStatus.DepositAccStatus.IN_MSG_ERR;
+		if((fees<0)||(quant<0)||(rcvquant<0))
+			return ComStatus.DepositAccStatus.IN_MSG_ERR;		
+		if(quant!=(fees+rcvquant))
+			return ComStatus.DepositAccStatus.IN_MSG_ERR;
+		
+		
+		return ComStatus.DepositAccStatus.SUCCESS;
+	}
 	
 	
 	public String getRequestid() {

@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blackjade.crm.apis.dword.CDepositCode;
 import com.blackjade.crm.apis.dword.CDepositCodeAns;
+import com.blackjade.crm.apis.dword.CDepositUpdate;
+import com.blackjade.crm.apis.dword.CDepositUpdateAns;
+import com.blackjade.crm.apis.dword.CWithdrawReq;
+import com.blackjade.crm.apis.dword.CWithdrawReqAns;
 import com.blackjade.crm.apis.dword.ComStatus;
+import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
 import com.blackjade.crm.service.DWOrdService;
 
@@ -64,6 +69,47 @@ public class CRMDepositWithdrawController {
 		return ans;
 	}
 	
-	
+	@RequestMapping(value = "/cDepositUpdate", method = RequestMethod.POST)
+	@ResponseBody
+	public CDepositUpdateAns cDepositUpdate (@RequestBody CDepositUpdate du) {
+				
+		DepositAccStatus st = du.reviewData();
 		
+		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
+			
+		
+		
+		// receive request 
+
+		// save order into database
+		
+		// calculate the right transaction based on fees
+		
+		// 0.0005 how much we take
+		
+		// 
+		
+		return ans;
+	}
+		
+	@RequestMapping(value = "/cWithdrawReq", method = RequestMethod.POST)
+	@ResponseBody
+	public CWithdrawReqAns cWithdraw (@RequestBody CWithdrawReq cwd) {
+
+		CWithdrawReqAns ans = new CWithdrawReqAns(cwd.getRequestid());
+			
+		// receive request 
+
+		// save things into database
+		
+		// calculate the right transaction
+		
+		// 0.0005 how much we take
+		
+		// 
+		
+		return ans;
+	}
+	
+	
 }

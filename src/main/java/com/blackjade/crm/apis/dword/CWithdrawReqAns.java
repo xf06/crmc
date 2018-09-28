@@ -1,21 +1,33 @@
 package com.blackjade.crm.apis.dword;
 
-//C	CRMC/GW/CNET/APM	
-//cWithdraw	
-//0x4005	{requestid, clientid, pnsid, pnsgid, toaddress, quant, fees, toquant}	HTTP
-public class CWithdraw {
-	
+import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
+import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
+
+//C	CRMC/GW/CNET/APM	cWithdraw	
+//cWithdrawAns	
+//0x4006	{requestid, clientid, oid, pnsid, pnsgid, toaddress, quant, fees, toquant, transactionid, conlvl, status}	HTTP
+
+public class CWithdrawReqAns {
+
 	private String requestid;
-	private int messageid;
+	private String messageid;
 	private int clientid;
-	//private String oid;
+	private String oid;
 	private int pnsid;
 	private int pnsgid;
 	private String toaddress;
 	private long quant;
 	private long fees;
 	private long toquant;
+	private String transactionid;
+	private WithdrawOrdStatus conlvl;
+	private WithdrawAccStatus status;
 
+	
+	public CWithdrawReqAns(String requestid) {
+		this.messageid = "4006";
+		this.requestid = requestid;
+	}
 	
 	public String getRequestid() {
 		return requestid;
@@ -39,6 +51,14 @@ public class CWithdraw {
 
 	public void setClientid(int clientid) {
 		this.clientid = clientid;
+	}
+
+	public String getOid() {
+		return oid;
+	}
+
+	public void setOid(String oid) {
+		this.oid = oid;
 	}
 
 	public int getPnsid() {
@@ -89,11 +109,28 @@ public class CWithdraw {
 		this.toquant = toquant;
 	}
 
-	@Override
-	public String toString() {
-		return "CWithdraw [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid + ","
-				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", toaddress=" + toaddress + ", quant=" + quant
-				+ ", fees=" + fees + ", toquant=" + toquant + "]";
+	public String getTransactionid() {
+		return transactionid;
 	}
-	
+
+	public void setTransactionid(String transactionid) {
+		this.transactionid = transactionid;
+	}
+
+	public WithdrawOrdStatus getConlvl() {
+		return conlvl;
+	}
+
+	public void setConlvl(WithdrawOrdStatus conlvl) {
+		this.conlvl = conlvl;
+	}
+
+	public WithdrawAccStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(WithdrawAccStatus status) {
+		this.status = status;
+	}
+
 }
