@@ -37,11 +37,11 @@ public class CWithdrawReqAns {
 		this.requestid = requestid;
 	}
 
-	public int getMessageid() {
+	public String getMessageid() {
 		return messageid;
 	}
 
-	public void setMessageid(int messageid) {
+	public void setMessageid(String messageid) {
 		this.messageid = messageid;
 	}
 

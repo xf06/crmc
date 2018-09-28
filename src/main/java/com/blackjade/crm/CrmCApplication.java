@@ -16,11 +16,11 @@ public class CrmCApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CrmCApplication.class, args);
 	}
-	
-	
+
 	@Bean
 	@LoadBalanced
 	RestTemplate initRestTemplate() {
 		return new RestTemplate();
 	}
+
 }
