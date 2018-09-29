@@ -79,16 +79,22 @@ public class CRMDepositWithdrawController {
 		
 		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
 		
-		// {requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
-		// {requestid, clientid, oid, pnsid, pnsgid, toaddress, quant, fees, toquant, transactionid, conlvl, status}
-
+		//	0x4003	{requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
+		//	0x4004	{requestid, clientid, oid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl, status}
 		
 		// receive request save order into database
 		ans.setClientid(du.getClientid());
-		ans.setOid(UUID.randomUUID());// register UUID
+		ans.setOid(UUID.randomUUID());		// register UUID
 		ans.setPnsgid(du.getPnsgid());
-		ans.setPnsid(du.getPnsid());
-		ans.setQuant(quant);
+		ans.setPnsid(du.getPnsid());		
+		ans.setQuant(du.getQuant());		
+		ans.setFees(du.getFees());		
+		ans.setRcvquant(du.getRcvquant()); 	// this is not accurate need to update
+		ans.setTransactionid(du.getTransactionid());
+		ans.setConlvl(du.getConlvl());
+		
+		
+		
 		
 		//UUID.randomUUID();
 		

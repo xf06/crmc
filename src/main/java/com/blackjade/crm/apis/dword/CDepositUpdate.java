@@ -12,6 +12,7 @@ public class CDepositUpdate {
 	private UUID requestid;
 	private String messageid;
 	private int clientid;
+	private UUID oid;
 	private int pnsid;
 	private int pnsgid;
 	private long quant;
@@ -19,21 +20,19 @@ public class CDepositUpdate {
 	private long rcvquant;
 	private String transactionid;
 	private DepositOrdStatus conlvl;
-	
+
 	public DepositAccStatus reviewData() {
-		
-		if(!"4003".equals(messageid))
+
+		if (!"4003".equals(messageid))
 			return ComStatus.DepositAccStatus.IN_MSG_ERR;
-		if((fees<0)||(quant<0)||(rcvquant<0))
-			return ComStatus.DepositAccStatus.IN_MSG_ERR;		
-		if(quant!=(fees+rcvquant))
+		if ((fees < 0) || (quant < 0) || (rcvquant < 0))
 			return ComStatus.DepositAccStatus.IN_MSG_ERR;
-		
-		
+		if (quant != (fees + rcvquant))
+			return ComStatus.DepositAccStatus.IN_MSG_ERR;
+
 		return ComStatus.DepositAccStatus.SUCCESS;
 	}
-	
-	
+
 	public UUID getRequestid() {
 		return requestid;
 	}
@@ -56,6 +55,14 @@ public class CDepositUpdate {
 
 	public void setClientid(int clientid) {
 		this.clientid = clientid;
+	}
+
+	public UUID getOid() {
+		return oid;
+	}
+
+	public void setOid(UUID oid) {
+		this.oid = oid;
 	}
 
 	public int getPnsid() {
@@ -117,8 +124,8 @@ public class CDepositUpdate {
 	@Override
 	public String toString() {
 		return "CDepositUpdate [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
-				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees + ", rcvquant="
-				+ rcvquant + ", transactionid=" + transactionid + ", conlvl=" + conlvl + "]";
+				+ ", oid=" + oid.toString() + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees
+				+ ", rcvquant=" + rcvquant + ", transactionid=" + transactionid + ", conlvl=" + conlvl + "]";
 	}
 
 }
