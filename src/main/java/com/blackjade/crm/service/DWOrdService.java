@@ -1,11 +1,19 @@
 package com.blackjade.crm.service;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.blackjade.crm.dao.DWOrdDao;;
+import com.blackjade.crm.apis.dword.CDepositUpdate;
+import com.blackjade.crm.apis.dword.CDepositUpdateAns;
+import com.blackjade.crm.dao.DWOrdDao;
+import com.blackjade.crm.exception.CapiException;
+import com.blackjade.crm.model.DWOrd;
+import com.blackjade.crm.model.FeesRow;;
 
 @Service
 public class DWOrdService {
@@ -14,6 +22,100 @@ public class DWOrdService {
 	
 	@Autowired
 	private DWOrdDao dwordDao;
+
+	@Autowired
+	private RestTemplate rest;
+	
+	private String apmurl;
+	
+	private String cneturl;
+	
+	@PostConstruct
+	public void apmInit() throws Exception {
+		//this.port = "8112";
+		//this.url = "http://localhost:" + port;
+		this.apmurl = "http://otc-apm/";
+		this.cneturl = "http://otc-cnet/";
+		//this.rest = new RestTemplate();
+	}
+
+	public int saveDWOrd(DWOrd dword) {
+		int retcode = 0;		
+		retcode = this.dwordDao
+		
+		return retcode;
+	}
+	
+	public CDepositUpdate updateFees(CDepositUpdate du) throws CapiException{
+		// select the proper fee rate
+		// CDepositUpdate newdu = null;
+		FeesRow fr = null;
+		try {
+			fr = this.dwordDao.getFeesRow(du.getPnsgid(), du.getPnsid(), 'D');
+			if(fr==null) {
+				logger.error("FEESROW FAILED TO RETREVE");
+				return null;
+			}
+		}catch(Exception e) {
+			logger.error("FEESROW FAILED TO RETREVE EXCEPTION");
+			return null;
+		}
+		
+		// update the proper du
+		long fees = 0;
+		long quant = du.getQuant();
+		long rcvquant = 0;
+		
+		if("FIXED".equals(fr.getType())) {			
+			fees = fr.getFixamt();
+		}
+		else {
+			fees = (long)((double)quant*fr.getFixrate());
+		}
+		
+		rcvquant = quant - fees;
+		
+		if((rcvquant<0)||(quant<0)||(fees<0))
+			return null;
+				
+		du.setRcvquant(rcvquant);
+		du.setFees(fees);
+		
+		return du;
+	}
+	
+	public CDepositUpdateAns sendToAPM(CDepositUpdate du) throws CapiException{
+		
+		CDepositUpdateAns ans = null;
+		try {
+			ans = this.rest.postForObject(apmurl, du, CDepositUpdateAns.class);
+			if(ans==null) {
+				throw new CapiException("MESSAGE TO APM FAILED");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return ans;
+		}
+		
+		return ans;
+	}
+	
+	
+	public DWOrd selectDWOrd(int clientid, String oid, int pnsgid, int pnsid) {
+		
+		DWOrd res = null;
+		try {
+			res = this.dwordDao.selecDWOrd(clientid, oid, pnsgid, pnsid);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return res;
+		}
+		
+		return res;
+	} 
+	
 	
 	public String getCoinAddress(int clientid, int pnsgid, int pnsid) {
 		String coinAddress= "";
@@ -28,5 +130,8 @@ public class DWOrdService {
 		
 		return coinAddress;
 	}
+	
+	
+
 	
 }

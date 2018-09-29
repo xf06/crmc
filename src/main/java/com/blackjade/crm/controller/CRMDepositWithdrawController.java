@@ -1,7 +1,5 @@
 package com.blackjade.crm.controller;
 
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import com.blackjade.crm.apis.dword.CWithdrawReqAns;
 import com.blackjade.crm.apis.dword.ComStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
+import com.blackjade.crm.model.DWOrd;
 import com.blackjade.crm.service.DWOrdService;
 
 @RestController
@@ -30,6 +29,7 @@ public class CRMDepositWithdrawController {
 	@Autowired
 	private DWOrdService dwordsrv;
 	
+
 	@RequestMapping(value = "/cDepositCode", method = RequestMethod.POST)
 	@ResponseBody
 	public CDepositCodeAns cDepositCode (@RequestBody CDepositCode depcode){
@@ -84,11 +84,11 @@ public class CRMDepositWithdrawController {
 		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
 				
 		//	0x4003	{requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
-		//	0x4004	{requestid, clientid, oid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl, status}
+		//	0x4004	{requestid, clientid, oid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl, status}		
 		
-		// receive request save order into database
+		// construct ans	
 		ans.setClientid(du.getClientid());
-		ans.setOid(du.getOid());			// register UUID
+		ans.setOid(du.getOid());		
 		ans.setPnsgid(du.getPnsgid());
 		ans.setPnsid(du.getPnsid());		
 		ans.setQuant(du.getQuant());		
@@ -101,14 +101,66 @@ public class CRMDepositWithdrawController {
 			ans.setStatus(st);
 			return ans;
 		}
-		
+				
+		DWOrd ord = null;
 		// check if proceeding 
 		if(ComStatus.DepositOrdStatus.PROCEEDING == du.getConlvl()) {
 			// check if order exist
-			this.dwordsrv
+			ord = this.dwordsrv.selectDWOrd(du.getClientid(), du.getOid().toString(), du.getPnsgid(), du.getPnsid());
 			
-			// if not send to APM and save into database // everything success reply to CNET 
-			// if yes reply duplicate proceeding order			
+			if(ord!=null){
+				ans.setStatus(ComStatus.DepositAccStatus.IN_MSG_ERR);
+				logger.warn("duplication entry");				
+				return ans;
+			}
+			
+			// update fees
+			try {
+				du = this.dwordsrv.updateFees(du);
+				if(du==null){
+					ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);// update fee error
+					return ans;
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
+				return ans;
+			}
+			
+			
+			// send to APM
+			CDepositUpdateAns apmans = null;
+			try {
+				apmans = this.dwordsrv.sendToAPM(du);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
+				return ans;
+			}
+			
+			// if apm is positive save into database
+			if(ComStatus.DepositAccStatus.SUCCESS  == apmans.getStatus()) {
+				try { // save into database
+					this.dwordsrv
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
+					return ans;
+				}
+			}
+			else {
+				ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
+				return ans;
+			} // save into database and return ans SUCCESS
+			
+			ans.setFees(du.getFees());
+			ans.setRcvquant(du.getRcvquant());
+			ans.setStatus(ComStatus.DepositAccStatus.SUCCESS);
+			return ans;
+			
 		}
 		
 		// send to APM if success save to 
@@ -117,6 +169,9 @@ public class CRMDepositWithdrawController {
 		
 		// check order conlvl 
 		if(ComStatus.DepositOrdStatus.PROCEEDING != du.getConlvl()) {
+			
+			
+			
 			
 		}
 		
