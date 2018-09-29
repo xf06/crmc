@@ -33,6 +33,8 @@ public class CRMDepositWithdrawController {
 	@RequestMapping(value = "/cDepositCode", method = RequestMethod.POST)
 	@ResponseBody
 	public CDepositCodeAns cDepositCode (@RequestBody CDepositCode depcode){
+	
+		logger.info(depcode.toString());
 		
 		DepositCodeStatus st = depcode.reviewData();
 		
@@ -74,17 +76,19 @@ public class CRMDepositWithdrawController {
 	@RequestMapping(value = "/cDepositUpdate", method = RequestMethod.POST)
 	@ResponseBody
 	public CDepositUpdateAns cDepositUpdate (@RequestBody CDepositUpdate du) {
-				
+		
+		logger.info(du.toString());
+
 		DepositAccStatus st = du.reviewData();
 		
 		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
-		
+				
 		//	0x4003	{requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
 		//	0x4004	{requestid, clientid, oid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl, status}
 		
 		// receive request save order into database
 		ans.setClientid(du.getClientid());
-		ans.setOid(UUID.randomUUID());		// register UUID
+		ans.setOid(du.getOid());			// register UUID
 		ans.setPnsgid(du.getPnsgid());
 		ans.setPnsid(du.getPnsid());		
 		ans.setQuant(du.getQuant());		
@@ -93,10 +97,34 @@ public class CRMDepositWithdrawController {
 		ans.setTransactionid(du.getTransactionid());
 		ans.setConlvl(du.getConlvl());
 		
+		if(ComStatus.DepositAccStatus.SUCCESS!=st) {
+			ans.setStatus(st);
+			return ans;
+		}
+		
+		// check if proceeding 
+		if(ComStatus.DepositOrdStatus.PROCEEDING == du.getConlvl()) {
+			// check if order exist
+			this.dwordsrv
+			
+			// if not send to APM and save into database // everything success reply to CNET 
+			// if yes reply duplicate proceeding order			
+		}
+		
+		// send to APM if success save to 
+		
+		// PROCEEDING,SUCCESS,FAILED,REJECT,UNKNOWN			
+		
+		// check order conlvl 
+		if(ComStatus.DepositOrdStatus.PROCEEDING != du.getConlvl()) {
+			
+		}
+		
+		// select order check if exist	
+		
+		// update if exist 		
 		
 		
-		
-		//UUID.randomUUID();
 		
 		ans.setFees(du.getFees());
 		

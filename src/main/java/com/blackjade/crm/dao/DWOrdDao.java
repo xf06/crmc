@@ -10,5 +10,8 @@ public interface DWOrdDao {
 					@Param(value="pnsgid") int pnsgid, 
 					@Param(value="pnsid") int pnsid
 	);
+	
+	
+	
 }
 
