@@ -1,11 +1,13 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 //C	CRMC/GW/CNET/APM	
 //cWithdraw	
 //0x4005	{requestid, clientid, pnsid, pnsgid, toaddress, quant, fees, toquant}	HTTP
 public class CWithdrawReq {
 	
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
 	//private String oid;
@@ -17,11 +19,11 @@ public class CWithdrawReq {
 	private long toquant;
 
 	
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -91,7 +93,7 @@ public class CWithdrawReq {
 
 	@Override
 	public String toString() {
-		return "CWithdraw [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid + ","
+		return "CWithdraw [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid + ","
 				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", toaddress=" + toaddress + ", quant=" + quant
 				+ ", fees=" + fees + ", toquant=" + toquant + "]";
 	}

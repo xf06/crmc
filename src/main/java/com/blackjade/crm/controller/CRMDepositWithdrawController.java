@@ -1,5 +1,7 @@
 package com.blackjade.crm.controller;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,18 +78,33 @@ public class CRMDepositWithdrawController {
 		DepositAccStatus st = du.reviewData();
 		
 		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
-			
 		
-		
-		// receive request 
+		// {requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
+		// {requestid, clientid, oid, pnsid, pnsgid, toaddress, quant, fees, toquant, transactionid, conlvl, status}
 
-		// save order into database
+		
+		// receive request save order into database
+		ans.setClientid(du.getClientid());
+		ans.setOid(UUID.randomUUID());// register UUID
+		ans.setPnsgid(du.getPnsgid());
+		ans.setPnsid(du.getPnsid());
+		ans.setQuant(quant);
+		
+		//UUID.randomUUID();
+		
+		ans.setFees(du.getFees());
+		
+		
+		// check request
 		
 		// calculate the right transaction based on fees
 		
 		// 0.0005 how much we take
 		
-		// 
+		// filled in the right answer 
+		
+		// if success send to APM to update cacc
+		
 		
 		return ans;
 	}

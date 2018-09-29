@@ -1,5 +1,7 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 
@@ -8,10 +10,10 @@ import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 
 public class CDepositUpdateAns {
 
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
-	private String oid;
+	private UUID oid;
 	private int pnsid;
 	private int pnsgid;
 	private long quant;
@@ -22,16 +24,16 @@ public class CDepositUpdateAns {
 	private DepositAccStatus status;
 
 	
-	public CDepositUpdateAns(String requestid){
+	public CDepositUpdateAns(UUID requestid){
 		this.messageid = "4004";
 		this.requestid = requestid;
 	}
 	
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -51,11 +53,11 @@ public class CDepositUpdateAns {
 		this.clientid = clientid;
 	}
 
-	public String getOid() {
+	public UUID getOid() {
 		return oid;
 	}
 
-	public void setOid(String oid) {
+	public void setOid(UUID oid) {
 		this.oid = oid;
 	}
 
@@ -125,7 +127,7 @@ public class CDepositUpdateAns {
 
 	@Override
 	public String toString() {
-		return "CDepositUpdateAns [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid
+		return "CDepositUpdateAns [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
 				+ ", oid=" + oid + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees
 				+ ", rcvquant=" + rcvquant + ", transactionid=" + transactionid + ", conlvl=" + conlvl + ", status="
 				+ status + "]";

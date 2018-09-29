@@ -1,12 +1,14 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
 
 //CRMC/GW	cDepositCodeAns	0x4002	{requestid, clientid, pnsid, pnsgid, depositcode, status}	HTTP
 
 public class CDepositCodeAns {
 
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
 	private int pnsid;
@@ -14,16 +16,16 @@ public class CDepositCodeAns {
 	private String depositcode;
 	private DepositCodeStatus status;
 
-	public CDepositCodeAns(String requestid) {
+	public CDepositCodeAns(UUID requestid) {
 		this.messageid = "4002";
 		this.requestid = requestid;
 	}
 
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -77,7 +79,7 @@ public class CDepositCodeAns {
 
 	@Override
 	public String toString() {
-		return "CDepositCodeAns [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid
+		return "CDepositCodeAns [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
 				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", depositcode=" + depositcode + ", status=" + status
 				+ "]";
 	}

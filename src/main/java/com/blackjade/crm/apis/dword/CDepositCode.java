@@ -1,11 +1,13 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
 
 //CRMC/GW	cDepositCode	0x4001	{requestid, clientid, pnsid, pnsgid}	HTTP
 
 public class CDepositCode {
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
 	private int pnsid;
@@ -22,11 +24,11 @@ public class CDepositCode {
 		return ComStatus.DepositCodeStatus.SUCCESS;
 	}
 
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -64,7 +66,7 @@ public class CDepositCode {
 
 	@Override
 	public String toString() {
-		return "CDepositCode [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid
+		return "CDepositCode [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
 				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + "]";
 	}
 

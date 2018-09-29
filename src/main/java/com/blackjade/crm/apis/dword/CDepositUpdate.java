@@ -1,5 +1,7 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 
@@ -7,7 +9,7 @@ import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 //0x4003 {requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}	HTTP
 
 public class CDepositUpdate {
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
 	private int pnsid;
@@ -32,11 +34,11 @@ public class CDepositUpdate {
 	}
 	
 	
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -114,7 +116,7 @@ public class CDepositUpdate {
 
 	@Override
 	public String toString() {
-		return "CDepositUpdate [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid
+		return "CDepositUpdate [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
 				+ ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees + ", rcvquant="
 				+ rcvquant + ", transactionid=" + transactionid + ", conlvl=" + conlvl + "]";
 	}

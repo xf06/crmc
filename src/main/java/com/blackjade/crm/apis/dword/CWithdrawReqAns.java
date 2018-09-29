@@ -1,5 +1,7 @@
 package com.blackjade.crm.apis.dword;
 
+import java.util.UUID;
+
 import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
 
@@ -9,10 +11,10 @@ import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
 
 public class CWithdrawReqAns {
 
-	private String requestid;
+	private UUID requestid;
 	private String messageid;
 	private int clientid;
-	private String oid;
+	private UUID oid;
 	private int pnsid;
 	private int pnsgid;
 	private String toaddress;
@@ -24,16 +26,16 @@ public class CWithdrawReqAns {
 	private WithdrawAccStatus status;
 
 	
-	public CWithdrawReqAns(String requestid) {
+	public CWithdrawReqAns(UUID requestid) {
 		this.messageid = "4006";
 		this.requestid = requestid;
 	}
 	
-	public String getRequestid() {
+	public UUID getRequestid() {
 		return requestid;
 	}
 
-	public void setRequestid(String requestid) {
+	public void setRequestid(UUID requestid) {
 		this.requestid = requestid;
 	}
 
@@ -53,11 +55,11 @@ public class CWithdrawReqAns {
 		this.clientid = clientid;
 	}
 
-	public String getOid() {
+	public UUID getOid() {
 		return oid;
 	}
 
-	public void setOid(String oid) {
+	public void setOid(UUID oid) {
 		this.oid = oid;
 	}
 
@@ -133,4 +135,14 @@ public class CWithdrawReqAns {
 		this.status = status;
 	}
 
+	@Override
+	public String toString() {
+		return "CWithdrawReqAns [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
+				+ ", oid=" + oid.toString() + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", toaddress=" + toaddress + ", quant="
+				+ quant + ", fees=" + fees + ", toquant=" + toquant + ", transactionid=" + transactionid + ", conlvl="
+				+ conlvl + ", status=" + status + "]";
+	}
+
+	
+	
 }
