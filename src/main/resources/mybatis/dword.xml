@@ -18,6 +18,15 @@
 			AND a.PNSID=#{pnsid} AND a.SIDE=#{side} AND a.QUANT=#{quant} AND a.NETQUANT=#{netquant}
 	</update>
 	
+	<select id="getFeesRow" resultType="com.blackjade.crm.model.FeesRow">
+		SELECT * FROM crm.fees a WHERE a.PNSGID=#{pnsgid} AND a.PNSID=#{pnsid} AND a.SIDE=#{side}
+	</select>
+		
+	<insert id="insertDWOrd">
+		INSERT INTO crm.dword (TIMESTAMP,OID,CID,SIDE,PNSGID,PNSID,QUANT,FEES,NETQUANT,TRANID,STATUS) 
+		VALUES(#{timestamp},#{oid},#{cid},#{side},#{pnsgid},#{pnsid},#{quant},#{fees},#{netquant},#{tranid},#{status})
+	</insert>
+
 </mapper>
 
 
