@@ -14,7 +14,7 @@ public interface DWOrdDao {
 	public FeesRow getFeesRow(
 					@Param(value="pnsgid") int pnsgid,
 					@Param(value="pnsid") int pnsid,
-					@Param(value="type") char type					
+					@Param(value="side") char side					
 			);
 		
 	// select coin deposit address  

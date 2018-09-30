@@ -69,6 +69,7 @@ public class DWOrdService {
 		
 		dword.setTimestamp(System.currentTimeMillis());
 		dword.setCid(duans.getClientid());
+		dword.setOid(duans.getOid().toString());
 		dword.setPnsgid(duans.getPnsgid());
 		dword.setPnsid(duans.getPnsid());
 		dword.setQuant(duans.getQuant());
@@ -99,6 +100,7 @@ public class DWOrdService {
 				return null;
 			}
 		}catch(Exception e) {
+			e.printStackTrace();
 			logger.error("FEESROW FAILED TO RETREVE EXCEPTION");
 			return null;
 		}

@@ -23,6 +23,7 @@ public class CDepositUpdateAns {
 	private DepositOrdStatus conlvl;
 	private DepositAccStatus status;
 
+	public CDepositUpdateAns() {}
 	
 	public CDepositUpdateAns(UUID requestid){
 		this.messageid = "4004";

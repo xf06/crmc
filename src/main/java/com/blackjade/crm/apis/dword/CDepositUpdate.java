@@ -123,8 +123,8 @@ public class CDepositUpdate {
 
 	@Override
 	public String toString() {
-		return "CDepositUpdate [requestid=" + requestid.toString() + ", messageid=" + messageid + ", clientid=" + clientid
-				+ ", oid=" + oid.toString() + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees
+		return "CDepositUpdate [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid
+				+ ", oid=" + oid + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", fees=" + fees
 				+ ", rcvquant=" + rcvquant + ", transactionid=" + transactionid + ", conlvl=" + conlvl + "]";
 	}
 
