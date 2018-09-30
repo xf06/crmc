@@ -82,10 +82,7 @@ public class CRMDepositWithdrawController {
 		DepositAccStatus st = du.reviewData();
 		
 		CDepositUpdateAns ans = new CDepositUpdateAns(du.getRequestid());
-				
-		//	0x4003	{requestid, clientid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl}
-		//	0x4004	{requestid, clientid, oid, pnsid, pnsgid, quant, fees, rcvquant, transactionid, conlvl, status}		
-		
+			
 		// construct ans	
 		ans.setClientid(du.getClientid());
 		ans.setOid(du.getOid());		
@@ -116,6 +113,7 @@ public class CRMDepositWithdrawController {
 			
 			// update fees
 			try {
+				// update fees quant and netquant
 				du = this.dwordsrv.updateFees(du);
 				if(du==null){
 					ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);// update fee error
@@ -143,7 +141,12 @@ public class CRMDepositWithdrawController {
 			if(ComStatus.DepositAccStatus.SUCCESS  == apmans.getStatus()) {
 				try { // save into database
 					ord = new DWOrd();
-					this.dwordsrv.saveDWOrd(ord, apmans);
+					ord.setSide('D');
+					int retcode = this.dwordsrv.saveDWOrd(ord, apmans);
+					if(retcode==0) {
+						ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+						return ans;
+					}
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -163,39 +166,83 @@ public class CRMDepositWithdrawController {
 			
 		}
 		
-		// send to APM if success save to 
-		
-		// PROCEEDING,SUCCESS,FAILED,REJECT,UNKNOWN			
-		
+		// PROCEEDING,SUCCESS,FAILED,REJECT,UNKNOWN					
 		// check order conlvl 
-		if(ComStatus.DepositOrdStatus.PROCEEDING != du.getConlvl()) {
+		if(ComStatus.DepositOrdStatus.PROCEEDING != du.getConlvl()) {			
 			
+			// select for update
+			try{
+				ord = this.dwordsrv.selectDWOrdForUpdate(du.getClientid(), du.getOid().toString(), du.getPnsgid(), du.getPnsid());				
+				if(ord==null) {
+					ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+					return ans;
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
 			
+			// check du and ord see if they match			
+			if(du.getQuant()!=ord.getQuant()) {
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
 			
+			if(du.getFees()!=ord.getFees()) {
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
 			
+			if(du.getRcvquant()!=ord.getNetquant()) {
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
+			
+			// send order to APM
+			CDepositUpdateAns apmans = null;			
+			try {
+				
+				apmans = this.dwordsrv.sendToAPM(du);				
+				if(apmans==null) {
+					ans.setStatus(ComStatus.DepositAccStatus.APM_REJECT);
+					return ans;
+				}
+				
+				if(apmans.getStatus()!=ComStatus.DepositAccStatus.SUCCESS) {
+					ans.setStatus(apmans.getStatus());
+					return ans;
+				}				
+				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.DepositAccStatus.APM_REJECT);				
+				return ans;
+			}
+			
+			// then update dword in database
+			ord = new DWOrd();
+			ord.setSide('D');
+			int retcode = 0;
+			try {				
+				retcode=this.dwordsrv.updateDWOrd(ord, apmans);
+				if(retcode==0) {
+					ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+					return ans;
+				}				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
+			// reply success			
+			return apmans;
 		}
-		
-		// select order check if exist	
-		
-		// update if exist 		
-		
-		
-		
-		ans.setFees(du.getFees());
-		
-		
-		// check request
-		
-		// calculate the right transaction based on fees
-		
-		// 0.0005 how much we take
-		
-		// filled in the right answer 
-		
-		// if success send to APM to update cacc
-		
-		
-		return ans;
+			
+		return ans; // this may not be excuted
 	}
 		
 	@RequestMapping(value = "/cWithdrawReq", method = RequestMethod.POST)

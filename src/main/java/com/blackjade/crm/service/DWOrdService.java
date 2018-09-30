@@ -31,7 +31,7 @@ public class DWOrdService {
 	private String cneturl;
 	
 	@PostConstruct
-	public void apmInit() throws Exception {
+	public void netInit() throws Exception {
 		//this.port = "8112";
 		//this.url = "http://localhost:" + port;
 		this.apmurl = "http://otc-apm/";
@@ -39,6 +39,30 @@ public class DWOrdService {
 		//this.rest = new RestTemplate();
 	}
 
+	public int updateDWOrd(DWOrd dword, CDepositUpdateAns duans) {
+		int retcode = 0;
+				
+		dword.setTimestamp(System.currentTimeMillis());
+		dword.setCid(duans.getClientid());
+		dword.setPnsgid(duans.getPnsgid());
+		dword.setPnsid(duans.getPnsid());
+		dword.setQuant(duans.getQuant());
+		dword.setFees(duans.getFees());
+		dword.setNetquant(duans.getRcvquant());
+		dword.setTranid(duans.getTransactionid());// normally this is empty for the first time.
+		dword.setStatus(duans.getConlvl().toString());		
+				
+		try {
+			retcode = this.dwordDao.updateDWOrd(dword);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+		
+		return retcode;
+	}
+	
 	public int saveDWOrd(DWOrd dword, CDepositUpdateAns duans) {
 		
 		int retcode = 0;
@@ -51,6 +75,7 @@ public class DWOrdService {
 		dword.setFees(duans.getFees());
 		dword.setNetquant(duans.getRcvquant());
 		dword.setTranid(duans.getTransactionid());// normally this is empty for the first time.
+		dword.setStatus(duans.getConlvl().toString());		
 		
 		try {
 			retcode = this.dwordDao.insertDWOrd(dword);
@@ -87,7 +112,12 @@ public class DWOrdService {
 			fees = fr.getFixamt();
 		}
 		else {
-			fees = (long)((double)quant*fr.getFixrate());
+			if("VAR".equals(fr.getType())) {
+				fees = (long)((double)quant*fr.getFixrate());
+			}
+			else {
+				return null;
+			}
 		}
 		
 		rcvquant = quant - fees;
@@ -117,8 +147,7 @@ public class DWOrdService {
 		
 		return ans;
 	}
-	
-	
+		
 	public DWOrd selectDWOrd(int clientid, String oid, int pnsgid, int pnsid) {
 		
 		DWOrd res = null;
@@ -132,7 +161,20 @@ public class DWOrdService {
 		
 		return res;
 	} 
-	
+		
+	public DWOrd selectDWOrdForUpdate(int clientid, String oid, int pnsgid, int pnsid) {
+
+		DWOrd res = null;
+		try {
+			res = this.dwordDao.selectDWOrdForUpdate(clientid, oid, pnsgid, pnsid); 
+		}
+		catch(Exception e) {   
+			e.printStackTrace();
+			return res;
+		}
+		
+		return res;
+	} 
 	
 	public String getCoinAddress(int clientid, int pnsgid, int pnsid) {
 		String coinAddress= "";
@@ -148,7 +190,5 @@ public class DWOrdService {
 		return coinAddress;
 	}
 	
-	
-
 	
 }

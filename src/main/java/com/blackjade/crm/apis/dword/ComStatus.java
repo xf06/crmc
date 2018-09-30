@@ -34,6 +34,8 @@ public class ComStatus {
 		MISS_ORD_DB,
 		WRONG_ORD_STATUS,
 		WRONG_ORD_QUANT,
+		MISS_DWORD_DB,
+		APM_REJECT,
 		UNKNOWN
 	}
 	
@@ -46,6 +48,8 @@ public class ComStatus {
 		MISS_ORD_DB,
 		WRONG_ORD_STATUS,
 		WRONG_ORD_QUANT,
+		MISS_DWORD_DB,
+		APM_REJECT,
 		UNKNOWN
 	}
 	

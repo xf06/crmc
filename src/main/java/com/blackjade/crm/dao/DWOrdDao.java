@@ -32,6 +32,17 @@ public interface DWOrdDao {
 					@Param(value="pnsid") int pnsid			
 			);
 
+	// select a DWOrd for update
+	public DWOrd selectDWOrdForUpdate(
+				@Param(value="clientid") int clientid,
+				@Param(value="oid") String oid,
+				@Param(value="pnsgid") int pnsgid, 
+				@Param(value="pnsid") int pnsid				
+			);
+	
+	// update DWOrd
+	public int updateDWOrd(DWOrd dword);
+	
 }
 
 

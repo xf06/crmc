@@ -8,6 +8,15 @@
 	<select id="selecDWOrd" resultType="com.blackjade.crm.model.DWOrd">
 		SELECT * FROM crm.dword a WHERE a.CID=#{clientid} AND a.OID=#{oid} AND a.PNSGID=#{pnsgid} AND a.PNSID=#{pnsid}
 	</select>
+		
+	<select id="selectDWOrdForUpdate" resultType="com.blackjade.crm.model.DWOrd">
+		SELECT * FROM crm.dword a WHERE a.CID=#{clientid} AND a.OID=#{oid} AND a.PNSGID=#{pnsgid} AND a.PNSID=#{pnsid} FOR UPDATE
+	</select>
+	
+	<update id="updateDWOrd">
+		UPDATE crm.dword a SET a.TRANID=#{tranid}, a.STATUS=#{status} WHERE a.CID=#{clientid} AND a.OID=#{oid} AND a.PNSGID=#{pnsgid} 
+			AND a.PNSID=#{pnsid} AND a.SIDE=#{side} AND a.QUANT=#{quant} AND a.NETQUANT=#{netquant}
+	</update>
 	
 </mapper>
 
