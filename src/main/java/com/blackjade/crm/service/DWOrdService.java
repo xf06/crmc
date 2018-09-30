@@ -135,7 +135,7 @@ public class DWOrdService {
 		
 		CDepositUpdateAns ans = null;
 		try {
-			ans = this.rest.postForObject(apmurl, du, CDepositUpdateAns.class);
+			ans = this.rest.postForObject(apmurl+"/cdepositupdate", du, CDepositUpdateAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO APM FAILED");
 			}
