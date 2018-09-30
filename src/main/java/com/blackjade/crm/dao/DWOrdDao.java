@@ -8,7 +8,7 @@ import com.blackjade.crm.model.FeesRow;
 public interface DWOrdDao {
 	
 	// insert dword into dwordrow
-	
+	public int insertDWOrd(DWOrd dword);
 	
 	// select FeesRow
 	public FeesRow getFeesRow(

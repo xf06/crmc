@@ -128,7 +128,6 @@ public class CRMDepositWithdrawController {
 				return ans;
 			}
 			
-			
 			// send to APM
 			CDepositUpdateAns apmans = null;
 			try {
@@ -143,7 +142,8 @@ public class CRMDepositWithdrawController {
 			// if apm is positive save into database
 			if(ComStatus.DepositAccStatus.SUCCESS  == apmans.getStatus()) {
 				try { // save into database
-					this.dwordsrv
+					ord = new DWOrd();
+					this.dwordsrv.saveDWOrd(ord, apmans);
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -200,7 +200,7 @@ public class CRMDepositWithdrawController {
 		
 	@RequestMapping(value = "/cWithdrawReq", method = RequestMethod.POST)
 	@ResponseBody
-	public CWithdrawReqAns cWithdraw (@RequestBody CWithdrawReq cwd) {
+	public CWithdrawReqAns cWithdrawReq (@RequestBody CWithdrawReq cwd) {
 
 		CWithdrawReqAns ans = new CWithdrawReqAns(cwd.getRequestid());
 			

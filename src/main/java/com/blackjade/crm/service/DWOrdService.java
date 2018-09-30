@@ -39,9 +39,26 @@ public class DWOrdService {
 		//this.rest = new RestTemplate();
 	}
 
-	public int saveDWOrd(DWOrd dword) {
-		int retcode = 0;		
-		retcode = this.dwordDao
+	public int saveDWOrd(DWOrd dword, CDepositUpdateAns duans) {
+		
+		int retcode = 0;
+		
+		dword.setTimestamp(System.currentTimeMillis());
+		dword.setCid(duans.getClientid());
+		dword.setPnsgid(duans.getPnsgid());
+		dword.setPnsid(duans.getPnsid());
+		dword.setQuant(duans.getQuant());
+		dword.setFees(duans.getFees());
+		dword.setNetquant(duans.getRcvquant());
+		dword.setTranid(duans.getTransactionid());// normally this is empty for the first time.
+		
+		try {
+			retcode = this.dwordDao.insertDWOrd(dword);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 		
 		return retcode;
 	}
