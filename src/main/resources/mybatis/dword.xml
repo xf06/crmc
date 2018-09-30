@@ -4,6 +4,11 @@
 	<select id="getCoinAddress" resultType="String">
 		SELECT a.CNETADD FROM crm.cacc a WHERE a.CID =#{clientid} AND a.PNSGID=#{pnsgid} AND a.PNSID=#{pnsid}
 	</select>
+	
+	<select id="selecDWOrd" resultType="com.blackjade.crm.model.DWOrd">
+		SELECT * FROM crm.dword a WHERE a.CID=#{clientid} AND a.OID=#{oid} AND a.PNSGID=#{pnsgid} AND a.PNSID=#{pnsid}
+	</select>
+	
 </mapper>
 
 
