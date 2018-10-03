@@ -3,47 +3,41 @@ package com.blackjade.crm.apis.dword;
 import java.util.UUID;
 
 import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
+import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
 
-//C	CRMC/GW/CNET/APM	
-//cWithdraw	
-//0x4005	{requestid, clientid, pnsid, pnsgid, toaddress, quant, fees, toquant}	HTTP
+//cWithdrawAcc	0x7105	{requestid, clientid, pnsid, pnsgid}	HTTP
 
-public class CWithdrawReq {
+public class CWithdrawAcc {
 
-	private UUID requestid;
 	private String messageid;
+	private UUID requestid;
 	private int clientid;
 	private UUID oid;
 	private int pnsid;
 	private int pnsgid;
-	private String toaddress;
 	private long quant;
-	private long fees;
-	private long toquant;
+	private String tranid;
+	private WithdrawOrdStatus conlvl;
 
+	public CWithdrawAcc() {
+		this.messageid = "7105";
+	}
+	
 	public WithdrawAccStatus reviewData() {
 
-		if (!"4005".equals(this.messageid))
+		if (!this.messageid.equals("7105"))
 			return ComStatus.WithdrawAccStatus.WRONG_MSGID;
 
-		if ((null != this.toaddress) || (this.toaddress != ""))
+		if (this.requestid == null)
 			return ComStatus.WithdrawAccStatus.IN_MSG_ERR;
 
-		if ((this.quant < 0) || (this.fees < 0) || (this.toquant < 0))
+		if (this.clientid <= 0)
 			return ComStatus.WithdrawAccStatus.IN_MSG_ERR;
 
-		if (this.quant != this.fees + this.toquant)
-			return ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT;
+		if (this.quant <= 0)
+			return ComStatus.WithdrawAccStatus.IN_MSG_ERR;
 
 		return ComStatus.WithdrawAccStatus.SUCCESS;
-	}
-
-	public UUID getRequestid() {
-		return requestid;
-	}
-
-	public void setRequestid(UUID requestid) {
-		this.requestid = requestid;
 	}
 
 	public String getMessageid() {
@@ -52,6 +46,14 @@ public class CWithdrawReq {
 
 	public void setMessageid(String messageid) {
 		this.messageid = messageid;
+	}
+
+	public UUID getRequestid() {
+		return requestid;
+	}
+
+	public void setRequestid(UUID requestid) {
+		this.requestid = requestid;
 	}
 
 	public int getClientid() {
@@ -86,14 +88,6 @@ public class CWithdrawReq {
 		this.pnsgid = pnsgid;
 	}
 
-	public String getToaddress() {
-		return toaddress;
-	}
-
-	public void setToaddress(String toaddress) {
-		this.toaddress = toaddress;
-	}
-
 	public long getQuant() {
 		return quant;
 	}
@@ -101,21 +95,28 @@ public class CWithdrawReq {
 	public void setQuant(long quant) {
 		this.quant = quant;
 	}
-
-	public long getFees() {
-		return fees;
+	
+	public String getTranid() {
+		return tranid;
 	}
 
-	public void setFees(long fees) {
-		this.fees = fees;
+	public void setTranid(String tranid) {
+		this.tranid = tranid;
+	}
+	
+	public WithdrawOrdStatus getConlvl() {
+		return conlvl;
 	}
 
-	public long getToquant() {
-		return toquant;
+	public void setConlvl(WithdrawOrdStatus conlvl) {
+		this.conlvl = conlvl;
 	}
 
-	public void setToquant(long toquant) {
-		this.toquant = toquant;
+	@Override
+	public String toString() {
+		return "CWithdrawAcc [messageid=" + messageid + ", requestid=" + requestid + ", clientid=" + clientid + ", oid="
+				+ oid + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", quant=" + quant + ", tranid=" + tranid
+				+ ", conlvl=" + conlvl + "]";
 	}
 
 }

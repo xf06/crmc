@@ -1,5 +1,7 @@
 package com.blackjade.crm.controller;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,16 @@ import com.blackjade.crm.apis.dword.CDepositCode;
 import com.blackjade.crm.apis.dword.CDepositCodeAns;
 import com.blackjade.crm.apis.dword.CDepositUpdate;
 import com.blackjade.crm.apis.dword.CDepositUpdateAns;
+import com.blackjade.crm.apis.dword.CWithdrawAcc;
+import com.blackjade.crm.apis.dword.CWithdrawAccAns;
 import com.blackjade.crm.apis.dword.CWithdrawReq;
 import com.blackjade.crm.apis.dword.CWithdrawReqAns;
+import com.blackjade.crm.apis.dword.CWithdrawUpdate;
+import com.blackjade.crm.apis.dword.CWithdrawUpdateAns;
 import com.blackjade.crm.apis.dword.ComStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
+import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
 import com.blackjade.crm.model.DWOrd;
 import com.blackjade.crm.service.DWOrdService;
 
@@ -249,8 +256,140 @@ public class CRMDepositWithdrawController {
 	@ResponseBody
 	public CWithdrawReqAns cWithdrawReq (@RequestBody CWithdrawReq cwd) {
 
+		logger.info(cwd.toString());		
+		
 		CWithdrawReqAns ans = new CWithdrawReqAns(cwd.getRequestid());
+		ans.setClientid(cwd.getClientid());
+		ans.setPnsgid(cwd.getPnsgid());
+		ans.setPnsid(cwd.getPnsid());
+		
+		ans.setQuant(cwd.getQuant());		
+		ans.setFees(cwd.getFees());
+		ans.setToquant(cwd.getToquant());
+		
+		ans.setToaddress(cwd.getToaddress());
+		ans.setOid(UUID.randomUUID()); 
+		ans.setTransactionid("new dword order"); // wait for CNet to generate
+		ans.setConlvl(ComStatus.WithdrawOrdStatus.PROCEEDING); // proceeding 
+		
+		// review input data 
+		WithdrawAccStatus st = cwd.reviewData();
+		
+		if(ComStatus.WithdrawAccStatus.SUCCESS!=st) {
+			ans.setStatus(st);
+			logger.info(ans.toString());		
+			return ans;
+		}		
+				
+		// update fees
+		try { // this is wrong should remind the front end// update this part right in the future
+			// update fees quant and netquant
+			cwd = this.dwordsrv.updateFees(cwd);
+			if(cwd==null){
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);// update fee error
+				logger.warn(ans.toString());
+				return ans;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+			logger.warn(ans.toString());
+			return ans;
+		}
+		
+		// re-assign those data
+		ans.setQuant(cwd.getQuant());		
+		ans.setFees(cwd.getFees());
+		ans.setToquant(cwd.getToquant());
+				
+		// Send things to APM
+		// construct the WithdrawAcc to APM 
+		try {
+			CWithdrawAcc apmwd = new CWithdrawAcc();
+			CWithdrawAccAns apmans = null;
+			apmwd.setRequestid(cwd.getRequestid());
+			apmwd.setOid(cwd.getOid());
+			apmwd.setPnsgid(cwd.getPnsgid());
+			apmwd.setPnsid(cwd.getPnsid());
+			apmwd.setQuant(cwd.getToquant()); // this is important
+			apmwd.setTranid("new withdraw order");
+			apmwd.setConlvl(ComStatus.WithdrawOrdStatus.PROCEEDING);
 			
+			apmans=this.dwordsrv.sendToAPM(apmwd);// send whatever APM requested
+			
+			if(apmans==null) {
+				//ans.setConlvl(ComStatus.WithdrawOrdStatus.PROCEEDING);
+				ans.setStatus(ComStatus.WithdrawAccStatus.APM_REJECT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			
+			if(ComStatus.WithdrawAccStatus.SUCCESS!=apmans.getStatus()) {
+				ans.setStatus(apmans.getStatus());
+				logger.warn(ans.toString());
+				return ans;
+			}			
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ans.setStatus(ComStatus.WithdrawAccStatus.APM_REJECT);
+			logger.warn(ans.toString());
+			return ans;
+		}
+		
+		// save things into database
+		DWOrd ord = null;
+		try { // save into database
+			ord = new DWOrd();
+			ord.setSide('W');
+			int retcode = this.dwordsrv.saveDWOrd(ord, ans);
+			if(retcode==0) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+				logger.warn(ans.toString());
+				return ans;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+			return ans;
+		}
+		
+		// send things to CNET
+		CWithdrawReqAns cnetans=null;
+		try {
+			cnetans = this.dwordsrv.sendToCNet(cwd);
+			if(cnetans==null) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.CNET_REJECTED);
+				logger.warn(ans.toString());
+				return ans;
+			}
+							
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ans.setStatus(ComStatus.WithdrawAccStatus.CNET_REJECTED);
+			logger.warn(ans.toString());
+			return ans;
+		}
+				
+		// reply success to ans
+		ans.setStatus(ComStatus.WithdrawAccStatus.SUCCESS);		
+		return ans;
+	}
+	
+	@RequestMapping(value = "/cWithdrawUpdate", method = RequestMethod.POST)
+	@ResponseBody
+	public CWithdrawUpdateAns cWithdrawUpdate (@RequestBody CWithdrawUpdate wdu) {
+
+		logger.info(wdu.toString());
+		
+		CWithdrawUpdateAns ans = null;
+		
+		
+		
 		// receive request 
 
 		// save things into database
@@ -263,6 +402,7 @@ public class CRMDepositWithdrawController {
 		
 		return ans;
 	}
+	
 	
 	
 }

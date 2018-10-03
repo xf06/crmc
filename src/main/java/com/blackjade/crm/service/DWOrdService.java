@@ -10,6 +10,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.blackjade.crm.apis.dword.CDepositUpdate;
 import com.blackjade.crm.apis.dword.CDepositUpdateAns;
+import com.blackjade.crm.apis.dword.CWithdrawAcc;
+import com.blackjade.crm.apis.dword.CWithdrawAccAns;
+import com.blackjade.crm.apis.dword.CWithdrawReq;
+import com.blackjade.crm.apis.dword.CWithdrawReqAns;
 import com.blackjade.crm.dao.DWOrdDao;
 import com.blackjade.crm.exception.CapiException;
 import com.blackjade.crm.model.DWOrd;
@@ -35,10 +39,26 @@ public class DWOrdService {
 		//this.port = "8112";
 		//this.url = "http://localhost:" + port;
 		this.apmurl = "http://otc-apm/";
-		this.cneturl = "http://otc-cnet/";
+		this.cneturl = "http://cnet-btc/";
 		//this.rest = new RestTemplate();
 	}
 
+	
+	public CWithdrawReqAns sendToCNet(CWithdrawReq wd){
+		CWithdrawReqAns ans=null;		
+		try {
+			ans = this.rest.postForObject(apmurl+"/withdraw", wd, CWithdrawReqAns.class);
+			if(ans==null) {
+				throw new CapiException("MESSAGE TO CNET FAILED");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return ans;
+		}
+		return ans;
+	}
+	
 	public int updateDWOrd(DWOrd dword, CDepositUpdateAns duans) {
 		int retcode = 0;
 				
@@ -70,6 +90,7 @@ public class DWOrdService {
 		dword.setTimestamp(System.currentTimeMillis());
 		dword.setCid(duans.getClientid());
 		dword.setOid(duans.getOid().toString());
+		dword.setSide('D');
 		dword.setPnsgid(duans.getPnsgid());
 		dword.setPnsid(duans.getPnsid());
 		dword.setQuant(duans.getQuant());
@@ -86,6 +107,31 @@ public class DWOrdService {
 			return 0;
 		}
 		
+		return retcode;
+	}
+	
+	public int saveDWOrd(DWOrd dword, CWithdrawReqAns wdans) {
+		int retcode = 0;
+		
+		dword.setTimestamp(System.currentTimeMillis());
+		dword.setCid(wdans.getClientid());
+		dword.setOid(wdans.getOid().toString());
+		dword.setSide('W');
+		dword.setPnsgid(wdans.getPnsgid());
+		dword.setPnsid(wdans.getPnsid());
+		dword.setQuant(wdans.getQuant());
+		dword.setFees(wdans.getFees());
+		dword.setNetquant(wdans.getToquant());
+		dword.setTranid(wdans.getTransactionid());// normally this is empty for the first time.
+		dword.setStatus(wdans.getConlvl().toString());		
+		
+		try {
+			retcode = this.dwordDao.insertDWOrd(dword);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 		return retcode;
 	}
 	
@@ -133,6 +179,49 @@ public class DWOrdService {
 		return du;
 	}
 	
+	public CWithdrawReq updateFees(CWithdrawReq wd) throws CapiException{
+		// CDepositUpdate newdu = null;
+		FeesRow fr = null;
+		try {
+			fr = this.dwordDao.getFeesRow(wd.getPnsgid(), wd.getPnsid(), 'W');
+			if(fr==null) {
+				logger.error("FEESROW FAILED TO RETREVE");
+				return null;
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			logger.error("FEESROW FAILED TO RETREVE EXCEPTION");
+			return null;
+		}
+		
+		// update the proper du
+		long fees = 0;
+		long quant = wd.getQuant();
+		long toquant = 0;
+		
+		if("FIXED".equals(fr.getType())) {			
+			fees = fr.getFixamt();
+		}
+		else {
+			if("VAR".equals(fr.getType())) {
+				fees = (long)((double)quant*fr.getFixrate());
+			}
+			else {
+				return null;
+			}
+		}
+		
+		toquant = quant - fees;
+		
+		if((toquant<0)||(quant<0)||(fees<0))
+			return null;
+				
+		wd.setToquant(toquant);
+		wd.setFees(fees);
+		
+		return wd;
+	}	
+	
 	public CDepositUpdateAns sendToAPM(CDepositUpdate du) throws CapiException{
 		
 		CDepositUpdateAns ans = null;
@@ -149,7 +238,24 @@ public class DWOrdService {
 		
 		return ans;
 	}
+	
+	public CWithdrawAccAns sendToAPM(CWithdrawAcc wd) throws CapiException{
+
+		CWithdrawAccAns ans=null;		
+		try {
+			ans = this.rest.postForObject(apmurl+"/withdraw", wd, CWithdrawAccAns.class);
+			if(ans==null) {
+				throw new CapiException("MESSAGE TO APM FAILED");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return ans;
+		}
 		
+		return ans;
+	}
+			
 	public DWOrd selectDWOrd(int clientid, String oid, int pnsgid, int pnsid) {
 		
 		DWOrd res = null;

@@ -36,6 +36,7 @@ public class ComStatus {
 		WRONG_ORD_QUANT,
 		MISS_DWORD_DB,
 		APM_REJECT,
+		CNET_REJECTED,
 		UNKNOWN
 	}
 	
