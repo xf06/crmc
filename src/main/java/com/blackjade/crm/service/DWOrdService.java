@@ -39,15 +39,14 @@ public class DWOrdService {
 		//this.port = "8112";
 		//this.url = "http://localhost:" + port;
 		this.apmurl = "http://otc-apm/";
-		this.cneturl = "http://cnet-btc/";
+		this.cneturl = "http://scnet-btc/";
 		//this.rest = new RestTemplate();
 	}
-
 	
 	public CWithdrawReqAns sendToCNet(CWithdrawReq wd){
 		CWithdrawReqAns ans=null;		
 		try {
-			ans = this.rest.postForObject(apmurl+"/withdraw", wd, CWithdrawReqAns.class);
+			ans = this.rest.postForObject(cneturl+"/withdraw", wd, CWithdrawReqAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO CNET FAILED");
 			}
@@ -57,6 +56,11 @@ public class DWOrdService {
 			return ans;
 		}
 		return ans;
+	}
+	
+	public int updateDWOrd(DWOrd dword) {
+		int retcode = 0;
+		return retcode;
 	}
 	
 	public int updateDWOrd(DWOrd dword, CDepositUpdateAns duans) {
@@ -133,8 +137,8 @@ public class DWOrdService {
 			return 0;
 		}
 		return retcode;
-	}
-	
+	}	
+	// need to be optmized
 	public CDepositUpdate updateFees(CDepositUpdate du) throws CapiException{
 		// select the proper fee rate
 		// CDepositUpdate newdu = null;
@@ -178,7 +182,7 @@ public class DWOrdService {
 		
 		return du;
 	}
-	
+	// need to be optimized 
 	public CWithdrawReq updateFees(CWithdrawReq wd) throws CapiException{
 		// CDepositUpdate newdu = null;
 		FeesRow fr = null;

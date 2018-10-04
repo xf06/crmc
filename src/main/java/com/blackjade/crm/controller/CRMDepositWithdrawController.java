@@ -384,25 +384,52 @@ public class CRMDepositWithdrawController {
 	@ResponseBody
 	public CWithdrawUpdateAns cWithdrawUpdate (@RequestBody CWithdrawUpdate wdu) {
 
+		// receive request from CNET
 		logger.info(wdu.toString());
 		
-		CWithdrawUpdateAns ans = null;
+		WithdrawAccStatus st = wdu.reviewData();
+		
+		// construct ans
+		CWithdrawUpdateAns ans = new CWithdrawUpdateAns(wdu.getRequestid());
+		ans.setClientid(wdu.getClientid());
+		ans.setOid(wdu.getOid());
+		ans.setPnsgid(wdu.getPnsgid());
+		ans.setPnsid(wdu.getPnsid());
+		ans.setQuant(wdu.getQuant());
+		ans.setFees(wdu.getFees());
+		ans.setToquant(wdu.getToquant());
+		ans.setToaddress(wdu.getToaddress());
+		ans.setTransactionid(wdu.getTransactionid());
+		ans.setConlvl(wdu.getConlvl());
 		
 		
+		if(ComStatus.WithdrawAccStatus.SUCCESS!=st) {
+			ans.setStatus(st);
+			logger.warn(ans.toString());
+			return ans;
+		}
 		
-		// receive request 
-
-		// save things into database
-		
-		// calculate the right transaction
-		
-		// 0.0005 how much we take
-		
-		// 
+		if(ComStatus.WithdrawOrdStatus.PROCEEDING==wdu.getConlvl()) {
+			// check database if oid registered 
+			this.dwordsrv.selectDWOrdForUpdate(clientid, oid, pnsgid, pnsid);
+						
+			// update local database
+			this.dwordsrv.updateDWOrd(dword, duans);
+			
+			
+		}
+		else { // SUCCESS,FAILED,REJECT,UNKNOWN				
+			
+			// send to APM and update Acc #####
+			
+			// update local database
+			
+			// reply ans to CNet
+		}
 		
 		return ans;
 	}
-	
-	
+
+		
 	
 }
