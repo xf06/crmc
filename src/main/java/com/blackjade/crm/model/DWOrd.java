@@ -12,6 +12,7 @@ public class DWOrd {
 	private long fees;
 	private long netquant;
 	private String tranid;
+	private String toaddress;
 	private String status;
 
 	public long getTimestamp() {
@@ -92,6 +93,14 @@ public class DWOrd {
 
 	public void setTranid(String tranid) {
 		this.tranid = tranid;
+	}
+	
+	public String getToaddress() {
+		return toaddress;
+	}
+
+	public void setToaddress(String toaddress) {
+		this.toaddress = toaddress;
 	}
 
 	public String getStatus() {

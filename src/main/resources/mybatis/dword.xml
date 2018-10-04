@@ -23,8 +23,8 @@
 	</select>
 		
 	<insert id="insertDWOrd">
-		INSERT INTO crm.dword (TIMESTAMP,OID,CID,SIDE,PNSGID,PNSID,QUANT,FEES,NETQUANT,TRANID,STATUS) 
-		VALUES(#{timestamp},#{oid},#{cid},#{side},#{pnsgid},#{pnsid},#{quant},#{fees},#{netquant},#{tranid},#{status})
+		INSERT INTO crm.dword (TIMESTAMP,OID,CID,SIDE,PNSGID,PNSID,QUANT,FEES,NETQUANT,TRANID,TOADDRESS,STATUS) 
+		VALUES(#{timestamp},#{oid},#{cid},#{side},#{pnsgid},#{pnsid},#{quant},#{fees},#{netquant},#{tranid},#{toaddress},#{status})
 	</insert>
 
 </mapper>

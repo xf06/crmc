@@ -60,9 +60,17 @@ public class DWOrdService {
 	
 	public int updateDWOrd(DWOrd dword) {
 		int retcode = 0;
+		try {
+			retcode = this.dwordDao.updateDWOrd(dword);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}		
 		return retcode;
 	}
 	
+	// this should be optimized
 	public int updateDWOrd(DWOrd dword, CDepositUpdateAns duans) {
 		int retcode = 0;
 				

@@ -25,6 +25,7 @@ import com.blackjade.crm.apis.dword.ComStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
 import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
+import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
 import com.blackjade.crm.model.DWOrd;
 import com.blackjade.crm.service.DWOrdService;
 
@@ -391,6 +392,7 @@ public class CRMDepositWithdrawController {
 		
 		// construct ans
 		CWithdrawUpdateAns ans = new CWithdrawUpdateAns(wdu.getRequestid());
+		
 		ans.setClientid(wdu.getClientid());
 		ans.setOid(wdu.getOid());
 		ans.setPnsgid(wdu.getPnsgid());
@@ -400,8 +402,7 @@ public class CRMDepositWithdrawController {
 		ans.setToquant(wdu.getToquant());
 		ans.setToaddress(wdu.getToaddress());
 		ans.setTransactionid(wdu.getTransactionid());
-		ans.setConlvl(wdu.getConlvl());
-		
+		ans.setConlvl(wdu.getConlvl());		
 		
 		if(ComStatus.WithdrawAccStatus.SUCCESS!=st) {
 			ans.setStatus(st);
@@ -411,25 +412,186 @@ public class CRMDepositWithdrawController {
 		
 		if(ComStatus.WithdrawOrdStatus.PROCEEDING==wdu.getConlvl()) {
 			// check database if oid registered 
-			this.dwordsrv.selectDWOrdForUpdate(clientid, oid, pnsgid, pnsid);
-						
+			DWOrd dword = null;
+			try {
+				dword = this.dwordsrv.selectDWOrdForUpdate(wdu.getClientid(), wdu.getOid().toString(), wdu.getPnsgid(), wdu.getPnsid());
+				if(dword==null) {
+					ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+					logger.warn(ans.toString());
+					return ans;
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			
+			// ## check dword ##
+			// check status
+			if(!dword.getStatus().equals(wdu.getConlvl().toString())) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+				logger.warn(ans.toString());
+				return ans;
+			}				
+			// check address 
+			if(!dword.getToaddress().equals(wdu.getToaddress())) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+				logger.warn(ans.toString());
+				return ans;
+			}			
+			// check quant
+			if(dword.getQuant()!=wdu.getQuant()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// check fees
+			if(dword.getFees()!=wdu.getFees()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// check net quant 
+			if(dword.getNetquant()!=wdu.getToquant()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// ## checkdword ##
+			
 			// update local database
-			this.dwordsrv.updateDWOrd(dword, duans);
-			
-			
+			int retcode = 0;
+			dword.setTranid(wdu.getTransactionid());
+			try {
+				retcode = this.dwordsrv.updateDWOrd(dword);
+				if(retcode==0) {
+					ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+					logger.warn(ans.toString());
+					return ans;
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// reply the ans
+			ans.setStatus(ComStatus.WithdrawAccStatus.SUCCESS);
+			logger.info(ans.toString());
+			return ans;			
 		}
-		else { // SUCCESS,FAILED,REJECT,UNKNOWN				
+		else { // SUCCESS,FAILED,REJECT,UNKNOWN
 			
-			// send to APM and update Acc #####
+			if((ComStatus.WithdrawOrdStatus.SUCCESS!=wdu.getConlvl())||(ComStatus.WithdrawOrdStatus.FAILED!=wdu.getConlvl())) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+				logger.error(ans.toString());
+				return ans;
+			}
+						
+			// check database if oid registered 
+			DWOrd dword = null;
+			try {
+				dword = this.dwordsrv.selectDWOrdForUpdate(wdu.getClientid(), wdu.getOid().toString(), wdu.getPnsgid(), wdu.getPnsid());
+				if(dword==null) {
+					ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+					logger.warn(ans.toString());
+					return ans;
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			
+			// ## check dword ##
+			// check status
+			if(!dword.getStatus().equals(ComStatus.WithdrawOrdStatus.PROCEEDING)) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+				logger.warn(ans.toString());
+				return ans;
+			}				
+			// check address 
+			if(!dword.getToaddress().equals(wdu.getToaddress())) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// check quant
+			if(dword.getQuant()!=wdu.getQuant()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// check fees
+			if(dword.getFees()!=wdu.getFees()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// check net quant 
+			if(dword.getNetquant()!=wdu.getToquant()) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.WRONG_ORD_QUANT);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			// ## checkdword ##
+			
+			
+			// send to APM and update Acc ##### only send SUCCESS and FAILED			
+			// ### construct withdrawAcc and withdrawAccAns ###
+			CWithdrawAcc apmwd = new CWithdrawAcc();
+			apmwd.setRequestid(wdu.getRequestid());
+			apmwd.setClientid(wdu.getClientid());
+			apmwd.setOid(wdu.getOid());
+			apmwd.setPnsgid(wdu.getPnsgid());
+			apmwd.setPnsid(wdu.getPnsid());
+			apmwd.setQuant(wdu.getToquant());
+			apmwd.setTranid(wdu.getTransactionid());
+			apmwd.setConlvl(wdu.getConlvl());
+			
+			CWithdrawAccAns apmans = null;
+			// ### construct withdrawAcc and withdrawAccAns ###
+			
+			try {
+				apmans = this.dwordsrv.sendToAPM(apmwd);
+				if((apmans==null)||(ComStatus.WithdrawAccStatus.SUCCESS!=apmans.getStatus())) {
+					ans.setStatus(ComStatus.WithdrawAccStatus.APM_REJECT);
+					logger.error(ans.toString());
+					return ans;
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				ans.setStatus(ComStatus.WithdrawAccStatus.APM_REJECT);
+				logger.error(ans.toString());
+				return ans;
+			}
 			
 			// update local database
+			int retcode=0 ;
+			dword.setStatus(wdu.getConlvl().toString());
+			try {
+				retcode = this.dwordsrv.updateDWOrd(dword);
+				if(retcode==0) {
+					ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+					logger.warn(ans.toString());
+					return ans;
+				}
+			}
+			catch(Exception e) {
+				ans.setStatus(ComStatus.WithdrawAccStatus.MISS_DWORD_DB);
+				logger.warn(ans.toString());
+				return ans;
+			}
 			
 			// reply ans to CNet
+			ans.setStatus(ComStatus.WithdrawAccStatus.SUCCESS);
+			return ans;
 		}
 		
-		return ans;
 	}
-
-		
 	
 }
