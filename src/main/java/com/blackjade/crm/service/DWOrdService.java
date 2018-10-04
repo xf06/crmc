@@ -28,7 +28,7 @@ public class DWOrdService {
 	private DWOrdDao dwordDao;
 
 	@Autowired
-	private RestTemplate rest;
+	private RestTemplate restTemplate;
 	
 	private String apmurl;
 	
@@ -39,14 +39,14 @@ public class DWOrdService {
 		//this.port = "8112";
 		//this.url = "http://localhost:" + port;
 		this.apmurl = "http://otc-apm/";
-		this.cneturl = "http://scnet-btc/";
+		this.cneturl = "http://cnet-btc/";
 		//this.rest = new RestTemplate();
 	}
 	
 	public CWithdrawReqAns sendToCNet(CWithdrawReq wd){
 		CWithdrawReqAns ans=null;		
 		try {
-			ans = this.rest.postForObject(cneturl+"/withdraw", wd, CWithdrawReqAns.class);
+			ans = this.restTemplate.postForObject(cneturl+"/withdraw", wd, CWithdrawReqAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO CNET FAILED");
 			}
@@ -135,6 +135,7 @@ public class DWOrdService {
 		dword.setFees(wdans.getFees());
 		dword.setNetquant(wdans.getToquant());
 		dword.setTranid(wdans.getTransactionid());// normally this is empty for the first time.
+		dword.setToaddress(wdans.getToaddress());
 		dword.setStatus(wdans.getConlvl().toString());		
 		
 		try {
@@ -238,7 +239,7 @@ public class DWOrdService {
 		
 		CDepositUpdateAns ans = null;
 		try {
-			ans = this.rest.postForObject(apmurl+"/cdepositupdate", du, CDepositUpdateAns.class);
+			ans = this.restTemplate.postForObject(apmurl+"/cdepositupdate", du, CDepositUpdateAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO APM FAILED");
 			}
@@ -255,7 +256,7 @@ public class DWOrdService {
 
 		CWithdrawAccAns ans=null;		
 		try {
-			ans = this.rest.postForObject(apmurl+"/withdraw", wd, CWithdrawAccAns.class);
+			ans = this.restTemplate.postForObject(apmurl+"/withdraw", wd, CWithdrawAccAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO APM FAILED");
 			}

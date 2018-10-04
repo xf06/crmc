@@ -258,6 +258,7 @@ public class CRMDepositWithdrawController {
 	public CWithdrawReqAns cWithdrawReq (@RequestBody CWithdrawReq cwd) {
 
 		logger.info(cwd.toString());		
+		UUID orderid = UUID.randomUUID();
 		
 		CWithdrawReqAns ans = new CWithdrawReqAns(cwd.getRequestid());
 		ans.setClientid(cwd.getClientid());
@@ -269,7 +270,7 @@ public class CRMDepositWithdrawController {
 		ans.setToquant(cwd.getToquant());
 		
 		ans.setToaddress(cwd.getToaddress());
-		ans.setOid(UUID.randomUUID()); 
+		ans.setOid(orderid); 
 		ans.setTransactionid("new dword order"); // wait for CNet to generate
 		ans.setConlvl(ComStatus.WithdrawOrdStatus.PROCEEDING); // proceeding 
 		
@@ -309,8 +310,9 @@ public class CRMDepositWithdrawController {
 		try {
 			CWithdrawAcc apmwd = new CWithdrawAcc();
 			CWithdrawAccAns apmans = null;
+			apmwd.setClientid(cwd.getClientid());
 			apmwd.setRequestid(cwd.getRequestid());
-			apmwd.setOid(cwd.getOid());
+			apmwd.setOid(orderid);
 			apmwd.setPnsgid(cwd.getPnsgid());
 			apmwd.setPnsid(cwd.getPnsid());
 			apmwd.setQuant(cwd.getToquant()); // this is important

@@ -25,6 +25,9 @@ public class CWithdrawReqAns {
 	private WithdrawOrdStatus conlvl;
 	private WithdrawAccStatus status;
 
+	public CWithdrawReqAns() {
+		this.messageid = "4006";
+	}
 	
 	public CWithdrawReqAns(UUID requestid) {
 		this.messageid = "4006";

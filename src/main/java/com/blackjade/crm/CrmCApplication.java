@@ -19,7 +19,7 @@ public class CrmCApplication {
 
 	@Bean
 	@LoadBalanced
-	RestTemplate initRestTemplate() {
+	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 

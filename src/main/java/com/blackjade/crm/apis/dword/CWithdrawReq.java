@@ -26,7 +26,7 @@ public class CWithdrawReq {
 		if (!"4005".equals(this.messageid))
 			return ComStatus.WithdrawAccStatus.WRONG_MSGID;
 
-		if ((null != this.toaddress) || (this.toaddress != ""))
+		if ((null == this.toaddress) || (this.toaddress == ""))
 			return ComStatus.WithdrawAccStatus.IN_MSG_ERR;
 
 		if ((this.quant < 0) || (this.fees < 0) || (this.toquant < 0))
@@ -118,4 +118,13 @@ public class CWithdrawReq {
 		this.toquant = toquant;
 	}
 
+	@Override
+	public String toString() {
+		return "CWithdrawReq [requestid=" + requestid + ", messageid=" + messageid + ", clientid=" + clientid + ", oid="
+				+ oid + ", pnsid=" + pnsid + ", pnsgid=" + pnsgid + ", toaddress=" + toaddress + ", quant=" + quant
+				+ ", fees=" + fees + ", toquant=" + toquant + "]";
+	}
+
+	
+	
 }
