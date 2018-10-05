@@ -259,6 +259,8 @@ public class CRMDepositWithdrawController {
 
 		logger.info(cwd.toString());		
 		UUID orderid = UUID.randomUUID();
+		// set the oid
+		cwd.setOid(orderid);
 		
 		CWithdrawReqAns ans = new CWithdrawReqAns(cwd.getRequestid());
 		ans.setClientid(cwd.getClientid());
@@ -366,6 +368,12 @@ public class CRMDepositWithdrawController {
 			cnetans = this.dwordsrv.sendToCNet(cwd);
 			if(cnetans==null) {
 				ans.setStatus(ComStatus.WithdrawAccStatus.CNET_REJECTED);
+				logger.warn(ans.toString());
+				return ans;
+			}
+			
+			if(ComStatus.WithdrawAccStatus.SUCCESS != cnetans.getStatus()) {
+				ans.setStatus(cnetans.getStatus());
 				logger.warn(ans.toString());
 				return ans;
 			}
@@ -486,7 +494,7 @@ public class CRMDepositWithdrawController {
 		}
 		else { // SUCCESS,FAILED,REJECT,UNKNOWN
 			
-			if((ComStatus.WithdrawOrdStatus.SUCCESS!=wdu.getConlvl())||(ComStatus.WithdrawOrdStatus.FAILED!=wdu.getConlvl())) {
+			if((ComStatus.WithdrawOrdStatus.SUCCESS!=wdu.getConlvl())&&(ComStatus.WithdrawOrdStatus.FAILED!=wdu.getConlvl())) {
 				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
 				logger.error(ans.toString());
 				return ans;
@@ -510,7 +518,7 @@ public class CRMDepositWithdrawController {
 			
 			// ## check dword ##
 			// check status
-			if(!dword.getStatus().equals(ComStatus.WithdrawOrdStatus.PROCEEDING)) {
+			if(!dword.getStatus().equals(ComStatus.WithdrawOrdStatus.PROCEEDING.toString())) {
 				ans.setStatus(ComStatus.WithdrawAccStatus.UNKNOWN);
 				logger.warn(ans.toString());
 				return ans;

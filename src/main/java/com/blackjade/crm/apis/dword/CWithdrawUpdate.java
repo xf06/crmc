@@ -29,7 +29,7 @@ public class CWithdrawUpdate {
 		if (!"4007".equals(this.messageid))
 			return ComStatus.WithdrawAccStatus.WRONG_MSGID;
 
-		if ((null != this.toaddress) || (this.toaddress != ""))
+		if ((null == this.toaddress) || (this.toaddress == ""))
 			return ComStatus.WithdrawAccStatus.IN_MSG_ERR;
 
 		if ((this.quant < 0) || (this.fees < 0) || (this.toquant < 0))
