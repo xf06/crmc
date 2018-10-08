@@ -18,7 +18,11 @@ public class CDepositAcc {
 	private long quant;
 	private String tranid;
 	private DepositOrdStatus conlvl;
-
+	
+	public CDepositAcc() {
+		this.messageid = "7103";
+	}
+	
 	public DepositAccStatus reviewData() {
 
 		if ((this.messageid==null)||(!this.messageid.equals("7103")))

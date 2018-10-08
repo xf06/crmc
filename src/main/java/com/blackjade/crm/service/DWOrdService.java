@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.blackjade.crm.apis.dword.CDepositAcc;
+import com.blackjade.crm.apis.dword.CDepositAccAns;
 import com.blackjade.crm.apis.dword.CDepositUpdate;
 import com.blackjade.crm.apis.dword.CDepositUpdateAns;
 import com.blackjade.crm.apis.dword.CWithdrawAcc;
@@ -235,11 +237,28 @@ public class DWOrdService {
 		return wd;
 	}	
 	
-	public CDepositUpdateAns sendToAPM(CDepositUpdate du) throws CapiException{
-		
-		CDepositUpdateAns ans = null;
+//	public CDepositUpdateAns sendToAPM(CDepositUpdate du) throws CapiException{
+//		
+//		CDepositUpdateAns ans = null;
+//		try {
+//			ans = this.restTemplate.postForObject(apmurl+"/cdepositupdate", du, CDepositUpdateAns.class);
+//			if(ans==null) {
+//				throw new CapiException("MESSAGE TO APM FAILED");
+//			}
+//		}
+//		catch(Exception e) {
+//			e.printStackTrace();
+//			return ans;
+//		}
+//		
+//		return ans;
+//	}
+	
+	
+	public CDepositAccAns sendToAPM(CDepositAcc da) {
+		CDepositAccAns ans = null;
 		try {
-			ans = this.restTemplate.postForObject(apmurl+"/cdepositupdate", du, CDepositUpdateAns.class);
+			ans = this.restTemplate.postForObject(apmurl+"/deposit", da, CDepositAccAns.class);
 			if(ans==null) {
 				throw new CapiException("MESSAGE TO APM FAILED");
 			}
@@ -248,9 +267,9 @@ public class DWOrdService {
 			e.printStackTrace();
 			return ans;
 		}
-		
 		return ans;
 	}
+	
 	
 	public CWithdrawAccAns sendToAPM(CWithdrawAcc wd) throws CapiException{
 

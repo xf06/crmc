@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blackjade.crm.apis.dword.CDepositAcc;
+import com.blackjade.crm.apis.dword.CDepositAccAns;
 import com.blackjade.crm.apis.dword.CDepositCode;
 import com.blackjade.crm.apis.dword.CDepositCodeAns;
 import com.blackjade.crm.apis.dword.CDepositUpdate;
@@ -24,8 +26,8 @@ import com.blackjade.crm.apis.dword.CWithdrawUpdateAns;
 import com.blackjade.crm.apis.dword.ComStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositAccStatus;
 import com.blackjade.crm.apis.dword.ComStatus.DepositCodeStatus;
+import com.blackjade.crm.apis.dword.ComStatus.DepositOrdStatus;
 import com.blackjade.crm.apis.dword.ComStatus.WithdrawAccStatus;
-import com.blackjade.crm.apis.dword.ComStatus.WithdrawOrdStatus;
 import com.blackjade.crm.model.DWOrd;
 import com.blackjade.crm.service.DWOrdService;
 
@@ -99,11 +101,13 @@ public class CRMDepositWithdrawController {
 		ans.setQuant(du.getQuant());		
 		ans.setFees(du.getFees());		
 		ans.setRcvquant(du.getRcvquant()); 	// this is not accurate need to update
+		ans.setToaddress(du.getToaddress());
 		ans.setTransactionid(du.getTransactionid());
 		ans.setConlvl(du.getConlvl());
 		
 		if(ComStatus.DepositAccStatus.SUCCESS!=st) {
 			ans.setStatus(st);
+			logger.warn(ans.toString());
 			return ans;
 		}
 				
@@ -115,7 +119,8 @@ public class CRMDepositWithdrawController {
 			
 			if(ord!=null){
 				ans.setStatus(ComStatus.DepositAccStatus.IN_MSG_ERR);
-				logger.warn("duplication entry");				
+				logger.warn("duplicate entry");				
+				logger.warn(ans.toString());				
 				return ans;
 			}
 			
@@ -134,23 +139,42 @@ public class CRMDepositWithdrawController {
 				return ans;
 			}
 			
-			// send to APM
-			CDepositUpdateAns apmans = null;
+			// send to APM /*derek fix this*/
+			//CDepositUpdateAns apmans = null;
+			CDepositAccAns apmans = null;
+			
+			// construct depositacc msg to APM
+			CDepositAcc dp = new CDepositAcc();
+			dp.setRequestid(du.getRequestid());
+			dp.setClientid(du.getClientid());
+			dp.setOid(du.getOid());
+			dp.setPnsgid(du.getPnsgid());
+			dp.setPnsid(du.getPnsgid());
+			dp.setQuant(du.getRcvquant());			
+			dp.setTranid(du.getTransactionid());
+			dp.setConlvl(du.getConlvl());
+			
+			
 			try {
-				apmans = this.dwordsrv.sendToAPM(du);
+				apmans = this.dwordsrv.sendToAPM(dp);// this need to be changed
 			}
 			catch(Exception e) {
 				e.printStackTrace();
 				ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
 				return ans;
 			}
+			// update ans;
+			
+			ans.setQuant(du.getQuant());		
+			ans.setFees(du.getFees());		
+			ans.setRcvquant(du.getRcvquant()); 
 			
 			// if apm is positive save into database
 			if(ComStatus.DepositAccStatus.SUCCESS  == apmans.getStatus()) {
 				try { // save into database
 					ord = new DWOrd();
 					ord.setSide('D');
-					int retcode = this.dwordsrv.saveDWOrd(ord, apmans);
+					int retcode = this.dwordsrv.saveDWOrd(ord, ans);
 					if(retcode==0) {
 						ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
 						return ans;
@@ -167,8 +191,8 @@ public class CRMDepositWithdrawController {
 				return ans;
 			} // save into database and return ans SUCCESS
 			
-			ans.setFees(du.getFees());
-			ans.setRcvquant(du.getRcvquant());
+			//ans.setFees(du.getFees());
+			//ans.setRcvquant(du.getRcvquant());
 			ans.setStatus(ComStatus.DepositAccStatus.SUCCESS);
 			return ans;
 			
@@ -177,6 +201,12 @@ public class CRMDepositWithdrawController {
 		// PROCEEDING,SUCCESS,FAILED,REJECT,UNKNOWN					
 		// check order conlvl 
 		if(ComStatus.DepositOrdStatus.PROCEEDING != du.getConlvl()) {			
+			
+			//check if it is SUCCESS or FAILED
+			if((ComStatus.DepositOrdStatus.SUCCESS!=du.getConlvl())&&(ComStatus.DepositOrdStatus.FAILED!=du.getConlvl())) {
+				ans.setStatus(ComStatus.DepositAccStatus.IN_MSG_ERR);
+				return ans;
+			}
 			
 			// select for update
 			try{
@@ -208,11 +238,29 @@ public class CRMDepositWithdrawController {
 				return ans;
 			}
 			
+			if(!ord.getStatus().equals(ComStatus.DepositOrdStatus.PROCEEDING.toString())) {
+				ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+				return ans;
+			}
+			
+			// construct  
+			// construct depositacc msg to APM
+			CDepositAcc dp = new CDepositAcc();
+			dp.setRequestid(du.getRequestid());
+			dp.setClientid(du.getClientid());
+			dp.setOid(du.getOid());
+			dp.setPnsgid(du.getPnsgid());
+			dp.setPnsid(du.getPnsgid());
+			dp.setQuant(du.getRcvquant());			
+			dp.setTranid(du.getTransactionid());
+			dp.setConlvl(du.getConlvl());
+			
 			// send order to APM
-			CDepositUpdateAns apmans = null;			
+			CDepositAccAns apmans = null;
+			
 			try {
 				
-				apmans = this.dwordsrv.sendToAPM(du);				
+				apmans = this.dwordsrv.sendToAPM(dp);				
 				if(apmans==null) {
 					ans.setStatus(ComStatus.DepositAccStatus.APM_REJECT);
 					return ans;
@@ -234,8 +282,10 @@ public class CRMDepositWithdrawController {
 			ord = new DWOrd();
 			ord.setSide('D');
 			int retcode = 0;
+			ans.setStatus(apmans.getStatus());
+			
 			try {				
-				retcode=this.dwordsrv.updateDWOrd(ord, apmans);
+				retcode=this.dwordsrv.updateDWOrd(ord, ans);
 				if(retcode==0) {
 					ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
 					return ans;
@@ -247,7 +297,7 @@ public class CRMDepositWithdrawController {
 				return ans;
 			}
 			// reply success			
-			return apmans;
+			return ans;
 		}
 			
 		return ans; // this may not be excuted
