@@ -149,7 +149,7 @@ public class CRMDepositWithdrawController {
 			dp.setClientid(du.getClientid());
 			dp.setOid(du.getOid());
 			dp.setPnsgid(du.getPnsgid());
-			dp.setPnsid(du.getPnsgid());
+			dp.setPnsid(du.getPnsid());
 			dp.setQuant(du.getRcvquant());			
 			dp.setTranid(du.getTransactionid());
 			dp.setConlvl(du.getConlvl());
@@ -250,7 +250,7 @@ public class CRMDepositWithdrawController {
 			dp.setClientid(du.getClientid());
 			dp.setOid(du.getOid());
 			dp.setPnsgid(du.getPnsgid());
-			dp.setPnsid(du.getPnsgid());
+			dp.setPnsid(du.getPnsid());
 			dp.setQuant(du.getRcvquant());			
 			dp.setTranid(du.getTransactionid());
 			dp.setConlvl(du.getConlvl());
