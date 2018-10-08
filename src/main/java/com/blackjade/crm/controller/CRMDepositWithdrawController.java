@@ -163,6 +163,7 @@ public class CRMDepositWithdrawController {
 				ans.setStatus(ComStatus.DepositAccStatus.UNKNOWN);
 				return ans;
 			}
+			
 			// update ans;
 			
 			ans.setQuant(du.getQuant());		
@@ -177,6 +178,7 @@ public class CRMDepositWithdrawController {
 					int retcode = this.dwordsrv.saveDWOrd(ord, ans);
 					if(retcode==0) {
 						ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
+						logger.warn(ans.toString());
 						return ans;
 					}
 				}
@@ -279,13 +281,13 @@ public class CRMDepositWithdrawController {
 			}
 			
 			// then update dword in database
-			ord = new DWOrd();
-			ord.setSide('D');
+			//ord = new DWOrd();
+			//ord.setSide('D');
 			int retcode = 0;
 			ans.setStatus(apmans.getStatus());
 			
 			try {				
-				retcode=this.dwordsrv.updateDWOrd(ord, ans);
+				retcode=this.dwordsrv.updateDWOrd(ord, ans);// problem
 				if(retcode==0) {
 					ans.setStatus(ComStatus.DepositAccStatus.MISS_DWORD_DB);
 					return ans;

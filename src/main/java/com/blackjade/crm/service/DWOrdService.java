@@ -110,6 +110,7 @@ public class DWOrdService {
 		dword.setQuant(duans.getQuant());
 		dword.setFees(duans.getFees());
 		dword.setNetquant(duans.getRcvquant());
+		dword.setToaddress(duans.getToaddress());
 		dword.setTranid(duans.getTransactionid());// normally this is empty for the first time.
 		dword.setStatus(duans.getConlvl().toString());		
 		
