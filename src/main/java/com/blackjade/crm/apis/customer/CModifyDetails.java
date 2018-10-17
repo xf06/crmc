@@ -8,6 +8,8 @@ public class CModifyDetails {
 	private int clientid;
 	private String mobile;
 	private String identification;
+	private String wechatid;
+	private String alipay;
 	
 	public ModifyDetailsEnum reviewData(){
 		
@@ -68,6 +70,22 @@ public class CModifyDetails {
 
 	public void setIdentification(String identification) {
 		this.identification = identification;
+	}
+
+	public String getWechatid() {
+		return wechatid;
+	}
+
+	public void setWechatid(String wechatid) {
+		this.wechatid = wechatid;
+	}
+
+	public String getAlipay() {
+		return alipay;
+	}
+
+	public void setAlipay(String alipay) {
+		this.alipay = alipay;
 	}
 	
 }

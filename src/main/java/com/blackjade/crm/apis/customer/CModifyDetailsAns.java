@@ -6,6 +6,8 @@ public class CModifyDetailsAns {
 	private int clientid;
 	private String mobile;
 	private String identification;
+	private String wechatid;
+	private String alipay;
 	
 	private Enum<?> status;
 
@@ -58,6 +60,18 @@ public class CModifyDetailsAns {
 
 	public void setStatus(Enum<?> status) {
 		this.status = status;
+	}
+	public String getWechatid() {
+		return wechatid;
+	}
+	public void setWechatid(String wechatid) {
+		this.wechatid = wechatid;
+	}
+	public String getAlipay() {
+		return alipay;
+	}
+	public void setAlipay(String alipay) {
+		this.alipay = alipay;
 	}
 	
 	

@@ -391,6 +391,8 @@ public class CustomerService {
 		customer.setId(cModifyDetails.getClientid());
 		customer.setMobile(cModifyDetails.getMobile());
 		customer.setIdentification(cModifyDetails.getIdentification());
+		customer.setWechatid(cModifyDetails.getWechatid());
+		customer.setAlipay(cModifyDetails.getAlipay());
 		
 		int row = 0;
 		try {

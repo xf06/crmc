@@ -76,7 +76,13 @@
 		     </if>  
 		     <if test="identification != null">  
 		        identification = #{identification},  
+		     </if>
+		     <if test="wechatid != null">  
+		        wechat_id = #{wechatid},  
 		     </if> 
+		     <if test="alipay != null">  
+		        alipay = #{alipay},  
+		     </if>  
 		</trim>
 		where id = #{id}   
 	</update>

@@ -13,6 +13,8 @@ public class Customer {
 	private String isEnable;
 	private String createTime;
 	private String updateTime;
+	private String wechatid;
+	private String alipay;
 	
 	
 	public int getId() {
@@ -80,5 +82,17 @@ public class Customer {
 	}
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
+	}
+	public String getWechatid() {
+		return wechatid;
+	}
+	public void setWechatid(String wechatid) {
+		this.wechatid = wechatid;
+	}
+	public String getAlipay() {
+		return alipay;
+	}
+	public void setAlipay(String alipay) {
+		this.alipay = alipay;
 	}
 }

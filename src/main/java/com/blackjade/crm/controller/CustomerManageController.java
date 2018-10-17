@@ -59,6 +59,8 @@ public class CustomerManageController {
 		cModifyDetailsAns.setClientid(cModifyDetails.getClientid());
 		cModifyDetailsAns.setMobile(cModifyDetails.getMobile());
 		cModifyDetailsAns.setIdentification(cModifyDetails.getIdentification());
+		cModifyDetailsAns.setWechatid(cModifyDetails.getWechatid());
+		cModifyDetailsAns.setAlipay(cModifyDetails.getAlipay());
 		
 		if (CustomerStatus.ModifyDetailsEnum.SUCCESS != modifyDetailsEnum){
 			cModifyDetailsAns.setStatus(modifyDetailsEnum);
