@@ -15,6 +15,7 @@ public class Customer {
 	private String updateTime;
 	private String wechatid;
 	private String alipay;
+	private String bankCard;
 	
 	
 	public int getId() {
@@ -94,5 +95,11 @@ public class Customer {
 	}
 	public void setAlipay(String alipay) {
 		this.alipay = alipay;
+	}
+	public String getBankCard() {
+		return bankCard;
+	}
+	public void setBankCard(String bankCard) {
+		this.bankCard = bankCard;
 	}
 }

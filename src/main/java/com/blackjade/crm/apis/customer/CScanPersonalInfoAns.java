@@ -8,6 +8,9 @@ public class CScanPersonalInfoAns {
 	private int clientid;
 	private String mobile;
 	private String identification;
+	private String wechatid;
+	private String alipay;
+	private String bankCard;
 	
 	private Enum<ScanPersonalInfoEnum> status;
 	
@@ -61,6 +64,30 @@ public class CScanPersonalInfoAns {
 
 	public void setStatus(Enum<ScanPersonalInfoEnum> status) {
 		this.status = status;
+	}
+
+	public String getWechatid() {
+		return wechatid;
+	}
+
+	public void setWechatid(String wechatid) {
+		this.wechatid = wechatid;
+	}
+
+	public String getAlipay() {
+		return alipay;
+	}
+
+	public void setAlipay(String alipay) {
+		this.alipay = alipay;
+	}
+
+	public String getBankCard() {
+		return bankCard;
+	}
+
+	public void setBankCard(String bankCard) {
+		this.bankCard = bankCard;
 	}
 	
 	

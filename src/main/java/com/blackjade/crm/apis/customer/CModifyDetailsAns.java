@@ -8,6 +8,7 @@ public class CModifyDetailsAns {
 	private String identification;
 	private String wechatid;
 	private String alipay;
+	private String bankCard;
 	
 	private Enum<?> status;
 
@@ -72,6 +73,12 @@ public class CModifyDetailsAns {
 	}
 	public void setAlipay(String alipay) {
 		this.alipay = alipay;
+	}
+	public String getBankCard() {
+		return bankCard;
+	}
+	public void setBankCard(String bankCard) {
+		this.bankCard = bankCard;
 	}
 	
 	

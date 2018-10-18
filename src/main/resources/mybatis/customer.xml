@@ -83,6 +83,9 @@
 		     <if test="alipay != null">  
 		        alipay = #{alipay},  
 		     </if>  
+		     <if test="bankCard != null">  
+		        bank_card = #{bankCard},  
+		     </if>
 		</trim>
 		where id = #{id}   
 	</update>
@@ -108,7 +111,10 @@
 			a.is_email_verify "isEmailVerify",
 			a.is_frozen "isFrozen",
 			a.is_enable "isEnable",
-			a.create_time "createTime"
+			a.create_time "createTime",
+			a.wechat_id "wechatid",
+			a.alipay "alipay",
+			a.bank_card "bankCard"
 		FROM crm.customer a
 		WHERE a.id = #{id}
 	</select>

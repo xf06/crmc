@@ -61,6 +61,7 @@ public class CustomerManageController {
 		cModifyDetailsAns.setIdentification(cModifyDetails.getIdentification());
 		cModifyDetailsAns.setWechatid(cModifyDetails.getWechatid());
 		cModifyDetailsAns.setAlipay(cModifyDetails.getAlipay());
+		cModifyDetailsAns.setBankCard(cModifyDetails.getBankCard());
 		
 		if (CustomerStatus.ModifyDetailsEnum.SUCCESS != modifyDetailsEnum){
 			cModifyDetailsAns.setStatus(modifyDetailsEnum);

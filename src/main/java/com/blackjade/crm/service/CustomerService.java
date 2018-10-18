@@ -393,6 +393,7 @@ public class CustomerService {
 		customer.setIdentification(cModifyDetails.getIdentification());
 		customer.setWechatid(cModifyDetails.getWechatid());
 		customer.setAlipay(cModifyDetails.getAlipay());
+		customer.setBankCard(cModifyDetails.getBankCard());
 		
 		int row = 0;
 		try {
@@ -462,6 +463,9 @@ public class CustomerService {
 		
 		cScanPersonalInfoAns.setMobile(customer.getMobile());
 		cScanPersonalInfoAns.setIdentification(customer.getIdentification());
+		cScanPersonalInfoAns.setWechatid(customer.getWechatid());
+		cScanPersonalInfoAns.setAlipay(customer.getAlipay());
+		cScanPersonalInfoAns.setBankCard(customer.getBankCard());
 		cScanPersonalInfoAns.setStatus(CustomerStatus.ScanPersonalInfoEnum.SUCCESS);
 		return cScanPersonalInfoAns;
 	}

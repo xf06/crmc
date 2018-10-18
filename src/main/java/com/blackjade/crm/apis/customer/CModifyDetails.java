@@ -10,6 +10,7 @@ public class CModifyDetails {
 	private String identification;
 	private String wechatid;
 	private String alipay;
+	private String bankCard;
 	
 	public ModifyDetailsEnum reviewData(){
 		
@@ -86,6 +87,14 @@ public class CModifyDetails {
 
 	public void setAlipay(String alipay) {
 		this.alipay = alipay;
+	}
+
+	public String getBankCard() {
+		return bankCard;
+	}
+
+	public void setBankCard(String bankCard) {
+		this.bankCard = bankCard;
 	}
 	
 }
